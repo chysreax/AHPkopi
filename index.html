@@ -78,60 +78,53 @@
             margin-bottom: 15px;
         }
 
-        #ahpGraphContainer { /* Added a container for potential responsive graph sizing */
-            width: 100%;
+        .content-section {
+            background-color: #FFFFFF;
+            padding: 25px;
             border-radius: 15px;
-            background-color: #4E342E; /* Slightly different dark brown for graph bg */
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        #ahpGraph {
-             width: 100%;
-             /* height is set dynamically by Plotly or can be fixed */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
+
+        #ahpGraph {
+            width: 100%;
+            /* height: 700px; /* Adjust as needed */
+            border-radius: 15px;
+            background-color: #FFFFFF;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
         .code-like {
             font-family: 'Courier New', Courier, monospace;
-            background-color: #6D4C41; /* Brown, slightly lighter than section bg */
-            padding: 3px 6px;
-            border-radius: 5px;
-            color: #F5F5F5; /* Off-white */
-            font-size: 0.95em;
+            background-color: #EFEBE9; /* Lightest brown */
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #3E2723; /* Darkest brown */
         }
 
         strong {
-            color: #BA68C8; /* Medium Purple for emphasis */
-            font-weight: 600;
+            color: #4A148C; /* Dark Purple for emphasis */
         }
 
-        a {
-            color: #CE93D8; /* Lighter Purple for links */
-            text-decoration: none;
-        }
-        a:hover {
-            color: #AB47BC; /* Medium Purple on hover */
-            text-decoration: underline;
-        }
-
-        /* Custom scrollbar */
+        /* Custom scrollbar for a bit more theme consistency - WebKit browsers */
         ::-webkit-scrollbar {
-            width: 12px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #5D4037; /* Dark Brown */
+            background: #E1BEE7; /* Light Purple/Lavender */
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: #7B1FA2; /* Medium Purple */
             border-radius: 10px;
-            border: 2px solid #5D4037; /* Creates a nice border effect */
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #9C27B0; /* Brighter Purple */
+            background: #4A148C; /* Dark Purple */
         }
 
     </style>
@@ -145,134 +138,150 @@
         <div class="content-section">
             <h2>Understanding Your Initial Coffee Diagram & AHP Revision</h2>
             <p>Your initial diagram was an excellent mind map showing various elements related to specialized coffee, including brewing methods, bean origins, and processing techniques. It effectively illustrated the relationships and categories within this domain.</p>
-            <p>However, to frame it as a formal <strong>Analytical Hierarchy Process (AHP)</strong>, some restructuring is beneficial. AHP is a structured technique for organizing and analyzing complex decisions, based on mathematics and psychology. It helps decision-makers set priorities and make the best decision when both qualitative and quantitative aspects of a decision need to be considered.</p>
+            <p>However, to frame it as a formal Analytical Hierarchy Process (AHP), some restructuring is beneficial. Here's a breakdown of the observations and the revisions made to create a more typical AHP decision-making model:</p>
 
-            <h3>Original Diagram Observations in an AHP Context:</h3>
+            <h3>Comments on the Original Diagram in an AHP Context:</h3>
             <ul>
-                <li><strong>Goal Misalignment:</strong> The top element "Specialized Coffee" acted more as the general topic rather than a specific decision-making goal (e.g., "Select the Best Coffee Offering for X Purpose").</li>
-                <li><strong>Categorization vs. Evaluation:</strong> Elements like brewing methods ("Manual", "Mesin") and bean origins were categorized, but not set up within a clear evaluative hierarchy for a specific choice.</li>
-                <li><strong>Multi-directional Relationships:</strong> Coffee beans were linked to multiple brewing methods. While true in reality, AHP follows a more directional top-down flow for evaluation: Goal → Criteria → Sub-Criteria → Alternatives.</li>
-                <li><strong>Nature of Elements:</strong> The levels mixed processes (brewing), inputs (beans), and attributes (processing). AHP typically uses levels for evaluative factors and the final level for the distinct choices (alternatives).</li>
+                <li><strong>Level 1 (Goal):</strong> "Specialized Coffee" acted more as the topic domain rather than a specific decision-making goal (e.g., "Select the Best Coffee Offering").</li>
+                <li><strong>Levels 2 & 3 (Brewing Methods):</strong> "Manual" (V60, French Press, Cold Brew, Tubruk) and "Mesin" (Mesin Espresso, Mesin Drip) were clear categories. These could be criteria or alternatives depending on the specific AHP goal.</li>
+                <li><strong>Level 4 (Bean Origins):</strong> Beans like Aceh Gayo, Mandailing, Toraja, Flores Bajawa were linked to multiple brewing methods. In AHP, these would typically be "Alternatives" to be evaluated, or attributes influencing a choice.</li>
+                <li><strong>Level 5 (Processing Methods):</strong> Washed, Dry, Honey processed were linked to "Flores Bajawa." In AHP, processing could be a sub-criterion for evaluating beans.</li>
+                <li><strong>Key AHP Divergences:</strong>
+                    <ul>
+                        <li><strong>Lack of a clear decision being evaluated:</strong> AHP ranks alternatives against criteria.</li>
+                        <li><strong>Multi-directional links:</strong> AHP typically has a top-down flow (Goal -> Criteria -> Sub-criteria -> Alternatives).</li>
+                        <li><strong>Varied entity types per level:</strong> AHP levels usually represent evaluative factors leading to a choice among alternatives.</li>
+                    </ul>
+                </li>
             </ul>
 
-            <h3>Corrections Made for a Clearer AHP Structure:</h3>
-            <p>To transform this into a standard AHP, we defined a specific, actionable business decision: <strong>A specialty coffee shop aims to introduce a new premium "Single Origin Feature" coffee offering and needs to select the optimal combination of bean and its ideal manual brewing method.</strong></p>
-            <p>The revised AHP structure, as visualized in the interactive graph below, is:</p>
+            <h3>Revising for a Clearer AHP Structure:</h3>
+            <p>To transform this into a standard AHP, we defined a specific business decision: <strong>A specialty coffee shop wants to introduce a new premium "Single Origin Feature" coffee offering.</strong> They need to decide which combination of bean and its ideal manual brewing method to highlight.</p>
+            <p>The revised AHP structure is as follows (and visualized in the graph below):</p>
             <ul>
-                <li><strong>Level 1: Goal</strong> - The ultimate objective: Select the Optimal New Single Origin Feature Offering.</li>
-                <li><strong>Level 2: Criteria</strong> - The main high-level factors crucial for making the decision (e.g., <strong>Exceptional Flavor & Quality</strong>, <strong>Customer Appeal & Uniqueness</strong>, <strong>Barista Skill & Consistency</strong>, <strong>Sourcing Story & Bean Characteristics</strong>). These are weighted based on importance.</li>
-                <li><strong>Level 3: Sub-Criteria</strong> - More specific, measurable aspects that break down each criterion (e.g., for "Exceptional Flavor," sub-criteria could be <strong>Clarity of Notes</strong>, <strong>Body & Mouthfeel</strong>, <strong>Aroma Intensity</strong>). These are also weighted relative to their parent criterion.</li>
-                <li><strong>Level 4: Alternatives</strong> - The distinct, comparable choices being evaluated (e.g., "Aceh Gayo (Washed) via V60," "Flores Bajawa (Honey Processed) via Cold Brew"). Each alternative is scored against each sub-criterion.</li>
+                <li><strong>Level 1: Goal</strong> - Select the Optimal New Single Origin Feature Offering.</li>
+                <li><strong>Level 2: Criteria</strong> - Key factors for selection (e.g., Exceptional Flavor, Customer Appeal, Barista Skill, Sourcing Story).</li>
+                <li><strong>Level 3: Sub-Criteria</strong> - Detailed aspects of each criterion (e.g., under Flavor: Clarity, Body, Aroma).</li>
+                <li><strong>Level 4: Alternatives</strong> - The specific combinations being considered (e.g., "Aceh Gayo (Washed) via V60," "Flores Bajawa (Honey Processed) via Cold Brew").</li>
             </ul>
-            <p>This structured approach allows for a systematic pairwise comparison (not shown in the graph, but a core AHP step) to derive numerical weights for criteria and scores for alternatives, leading to a quantitatively supported best choice.</p>
+            <p>This revised structure allows for a systematic evaluation of defined alternatives against a consistent set of criteria and sub-criteria, which is the core of the AHP methodology.</p>
         </div>
 
         <div class="content-section">
-            <h2>Interactive AHP Hierarchy Graph</h2>
-            <p>The following graph visualizes the revised 4-level AHP structure. Hover over nodes to highlight their connections and dim unrelated elements. This helps in understanding the relationships within the decision hierarchy. (Zoom and Pan are also enabled).</p>
-            <div id="ahpGraphContainer">
-                <div id="ahpGraph"></div>
-            </div>
+            <h2>AHP Hierarchy Graph for Coffee Offering Selection</h2>
+            <p>The following graph visualizes the revised 4-level AHP structure for selecting a new single origin coffee feature. This is a simplified network representation to show the hierarchy. In a full AHP, weights would be assigned at each level based on pairwise comparisons.</p>
+            <div id="ahpGraph"></div>
         </div>
 
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const graphDiv = document.getElementById('ahpGraph');
-
             const ahpData = {
                 nodes: [
                     // Level 1: Goal
-                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'GOAL' },
+                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'Goal' },
+
                     // Level 2: Criteria
-                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'CRITERION' },
-                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'CRITERION' },
-                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'CRITERION' },
-                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'CRITERION' },
-                    // Level 3: Sub-Criteria
-                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
-                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
-                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'Criterion 1' },
+                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'Criterion 2' },
+                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'Criterion 3' },
+                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'Criterion 4' },
+
+                    // Level 3: Sub-Criteria for C1
+                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C2
+                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C3
+                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C4
+                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'Sub-Criterion' },
+
+
                     // Level 4: Alternatives
-                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 1' },
-                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'ALTERNATIVE 2' },
-                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 3' },
-                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'ALTERNATIVE 4' },
-                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'ALTERNATIVE 5' }
+                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 1' },
+                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'Alternative 2' },
+                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 3' },
+                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'Alternative 4' },
+                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'Alternative 5' }
                 ],
                 links: [
+                    // Goal to Criteria
+                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
+                    // C1 to its Sub-Criteria
+                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
+                    // C2 to its Sub-Criteria
+                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
+                    // C3 to its Sub-Criteria
+                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
+                    // C4 to its Sub-Criteria
+                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
+                    // Sub-Criteria to Alternatives (Illustrative - connecting all for simplicity, in reality specific connections)
+                    // Connecting all sub-criteria to all alternatives for visual representation of the layer.
+                    // In practice, each alternative is evaluated against each sub-criterion.
+                    'SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3'
+                ].flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
+                 .concat([ // Adding goal to criteria links back as flatMap overwrote them
                     { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
                     { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
                     { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
                     { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
                     { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-                ].concat(
-                    ['SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3']
-                    .flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
-                )
+                 ])
             };
 
-            const nodeMap = new Map(ahpData.nodes.map((node, i) => [node.id, { ...node, index: i }]));
+            const nodeMap = new Map(ahpData.nodes.map(node => [node.id, node]));
 
+            // Assign x, y positions
             const levels = {};
             ahpData.nodes.forEach(node => {
                 if (!levels[node.level]) levels[node.level] = [];
                 levels[node.level].push(node);
             });
 
-            const xSpacing = 280; // Increased spacing
-            const ySpacing = 110; // Adjusted for visual balance
+            const xSpacing = 250;
+            const ySpacing = 120;
             let maxYUsed = 0;
-            let minYUsed = 0;
 
-
-            Object.keys(levels).sort((a,b) => parseInt(a)-parseInt(b)).forEach((levelKey, levelIndex) => {
+            Object.keys(levels).sort((a,b) => a-b).forEach((levelKey, levelIndex) => {
                 const nodesInLevel = levels[levelKey];
                 const levelWidth = (nodesInLevel.length - 1) * ySpacing;
                 let startY = -levelWidth / 2;
+                if (levelKey == 1) startY = 0; // Center the goal
+                if (levelKey == 4) startY -= ySpacing*1.5; // Adjust alternatives start
 
-                if (parseInt(levelKey) === 1) startY = 0; // Center Goal
-                if (parseInt(levelKey) === 4) startY -= ySpacing * 1.2; // Adjust Alternatives slightly
-
-                nodesInLevel.forEach((node, nodeIndexInLevel) => {
+                nodesInLevel.forEach((node, nodeIndex) => {
                     node.x = levelIndex * xSpacing;
-                    node.y = startY + nodeIndexInLevel * ySpacing;
+                    node.y = startY + nodeIndex * ySpacing;
                     if (node.y > maxYUsed) maxYUsed = node.y;
-                    if (node.y < minYUsed) minYUsed = node.y;
                 });
             });
-            // Ensure all nodes have x, y
-             ahpData.nodes.forEach(n_orig => {
-                let mapped_node = nodeMap.get(n_orig.id);
-                if(mapped_node) {
-                    n_orig.x = mapped_node.x;
-                    n_orig.y = mapped_node.y;
-                }
-             });
 
 
-            const initialEdgeShapes = ahpData.links.map((link, index) => {
+            const edgeShapes = [];
+            ahpData.links.forEach(link => {
                 const sourceNode = nodeMap.get(link.source);
                 const targetNode = nodeMap.get(link.target);
-                return {
-                    id: `link-${index}`, // Unique ID for each shape
-                    type: 'line',
-                    x0: sourceNode.x,
-                    y0: sourceNode.y,
-                    x1: targetNode.x,
-                    y1: targetNode.y,
-                    line: { color: '#757575', width: 1.5 }, // Neutral light grey for links
-                    opacity: 1
-                };
+                if (sourceNode && targetNode) {
+                    edgeShapes.push({
+                        type: 'line',
+                        x0: sourceNode.x,
+                        y0: sourceNode.y,
+                        x1: targetNode.x,
+                        y1: targetNode.y,
+                        line: {
+                            color: '#D7CCC8', // Light Brown/Beige for lines
+                            width: 1.5
+                        }
+                    });
+                }
             });
 
             const traceNodes = {
@@ -282,103 +291,72 @@
                 mode: 'markers+text',
                 type: 'scatter',
                 marker: {
-                    size: ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)), // Goal larger, Alts slightly smaller
+                    size: 20,
                     color: ahpData.nodes.map(n => {
-                        if (n.level === 1) return '#E040FB'; // Bright Purple (Goal)
-                        if (n.level === 2) return '#BA68C8'; // Medium Purple (Criteria)
-                        if (n.level === 3) return '#4DB6AC'; // Teal (Sub-Criteria)
-                        if (n.level === 4) return '#FFB74D'; // Amber (Alternatives)
-                        return '#D1C4E9';
+                        if (n.level === 1) return '#4A148C'; // Dark Purple (Goal)
+                        if (n.level === 2) return '#7B1FA2'; // Medium Purple (Criteria)
+                        if (n.level === 3) return '#795548'; // Medium Brown (Sub-Criteria)
+                        if (n.level === 4) return '#5D4037'; // Dark Brown (Alternatives)
+                        return '#E1BEE7';
                     }),
                     symbol: ahpData.nodes.map(n => {
-                        if (n.level === 1) return 'diamond-wide';
+                        if (n.level === 1) return 'diamond';
                         if (n.level === 2) return 'square';
                         if (n.level === 3) return 'circle';
-                        if (n.level === 4) return 'hexagon';
+                        if (n.level === 4) return 'hexagon2';
                         return 'circle';
                     }),
-                    line: { width: 2, color: '#F5F5F5' }, // White border for markers
-                    opacity: ahpData.nodes.map(() => 1) // Initial opacity
+                    line: {
+                        width: 2,
+                        color: '#424242' // Dark Grey border for markers
+                    }
                 },
                 textfont: {
                     family: 'Segoe UI, Tahoma, sans-serif',
                     size: 10,
-                    color: '#FFFFFF'
+                    color: '#3E2723' // Darkest brown text for nodes
                 },
                 textposition: 'middle right',
-                hoverinfo: 'text', // Use hovertext for custom tooltip
-                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
-                customdata: ahpData.nodes.map(n => ({ id: n.id })) // Store node ID for hover events
+                hoverinfo: 'text',
+                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`)
             };
 
             const layout = {
                 title: {
-                    text: 'Interactive AHP Hierarchy: Coffee Offering Selection',
-                    font: { size: 22, color: '#E040FB' /* Bright Purple */ },
-                    y:0.95 // Adjust title position
+                    text: 'AHP Hierarchy: Coffee Offering Selection',
+                    font: {
+                        size: 20,
+                        color: '#4A148C' // Dark Purple
+                    }
                 },
-                shapes: initialEdgeShapes,
-                xaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [-xSpacing*0.5, xSpacing * 3.5 + 50] },
-                yaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [minYUsed - ySpacing, maxYUsed + ySpacing] },
+                shapes: edgeShapes,
+                xaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [-xSpacing*0.5, xSpacing * 3.5] // Adjusted range
+                },
+                yaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [-maxYUsed - ySpacing, maxYUsed + ySpacing] // Adjusted range
+                },
                 showlegend: false,
                 hovermode: 'closest',
-                paper_bgcolor: '#4E342E', // Graph area background
-                plot_bgcolor: '#4E342E',
+                paper_bgcolor: '#FFFFFF', // Background of the plotting area
+                plot_bgcolor: '#FFFFFF',  // Background of the graph itself
                 margin: { t: 80, b: 40, l: 40, r: 40 },
-                height: 850 // Increased height
+                height: 800 // Increased height for better spacing
             };
 
-            Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
+            Plotly.newPlot('ahpGraph', [traceNodes], layout);
 
-            graphDiv.on('plotly_hover', function (eventData) {
-                if (eventData.points.length > 0) {
-                    const hoveredNodeIndex = eventData.points[0].pointNumber;
-                    const hoveredNodeId = ahpData.nodes[hoveredNodeIndex].id;
-
-                    const connectedLinkIds = [];
-                    const connectedNodeIds = new Set([hoveredNodeId]);
-
-                    ahpData.links.forEach((link,idx) => {
-                        if (link.source === hoveredNodeId) {
-                            connectedNodeIds.add(link.target);
-                            connectedLinkIds.push(`link-${idx}`);
-                        }
-                        if (link.target === hoveredNodeId) {
-                            connectedNodeIds.add(link.source);
-                            connectedLinkIds.push(`link-${idx}`);
-                        }
-                    });
-
-                    const newMarkerOpacities = ahpData.nodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
-                    const newMarkerSizes = ahpData.nodes.map(n => {
-                        if (n.id === hoveredNodeId) return n.level === 1 ? 32 : (n.level === 4 ? 26 : 28); // Emphasize hovered
-                        return n.level === 1 ? 28 : (n.level === 4 ? 22 : 24); // Default sizes
-                    });
-
-
-                    Plotly.restyle(graphDiv, {
-                        'marker.opacity': [newMarkerOpacities],
-                        'marker.size': [newMarkerSizes]
-                    }, [0]); // 0 refers to the first trace (traceNodes)
-
-                    const updatedShapes = initialEdgeShapes.map(shape => {
-                        const isConnected = ahpData.links.some((link, idx) =>
-                            `link-${idx}` === shape.id && (connectedNodeIds.has(link.source) && connectedNodeIds.has(link.target) && (link.source === hoveredNodeId || link.target === hoveredNodeId))
-                        );
-                        return { ...shape, line: {...shape.line, width: isConnected ? 3 : 1.5, color: isConnected ? '#E040FB' : '#757575'}, opacity: isConnected ? 1 : 0.15 };
-                    });
-                    Plotly.relayout(graphDiv, { shapes: updatedShapes });
-                }
-            });
-
-            graphDiv.on('plotly_unhover', function (eventData) {
-                Plotly.restyle(graphDiv, {
-                    'marker.opacity': [ahpData.nodes.map(() => 1)],
-                    'marker.size': [ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
-                }, [0]);
-                Plotly.relayout(graphDiv, { shapes: initialEdgeShapes.map(s => ({...s, line: {...s.line, width: 1.5, color: '#757575'}, opacity: 1})) });
-            });
-
+            // Small fix for link generation - ensure only unique links for goal to criteria etc.
+            // The flatMap approach for alternatives is good, but we need to preserve the earlier defined links.
+            // The .concat method used in the data structure above is a better way.
+            // The current link generation for Sub-Criteria to Alternatives is illustrative, showing layer connection.
+            // A true AHP evaluation would have individual weightings.
         });
     </script>
 </body>
