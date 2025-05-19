@@ -494,19 +494,26 @@
     </div>
 
     <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const graphDiv = document.getElementById('ahpGraph');
 
+            if (!graphDiv) {
+                console.error("Error: The div with ID 'ahpGraph' was not found.");
+                return; // Stop if the target div doesn't exist
+            }
+            if (typeof Plotly === 'undefined') {
+                console.error("Error: Plotly library is not loaded.");
+                return; // Stop if Plotly isn't available
+            }
+
             const ahpData = {
                 nodes: [
-                    // Level 1: Goal
                     { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'GOAL' },
-                    // Level 2: Criteria
                     { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'CRITERION' },
                     { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'CRITERION' },
                     { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'CRITERION' },
                     { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'CRITERION' },
-                    // Level 3: Sub-Criteria
                     { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
                     { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
                     { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
@@ -518,7 +525,6 @@
                     { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
                     { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
                     { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                    // Level 4: Alternatives
                     { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 1' },
                     { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'ALTERNATIVE 2' },
                     { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 3' },
@@ -537,12 +543,17 @@
                 )
             };
 
-            const nodeMap = new Map(ahpData.nodes.map((node, i) => [node.id, { ...node, index: i }]));
+            // Create a map for quick node lookup and to store coordinates
+            const nodeMap = new Map();
+            ahpData.nodes.forEach((node, i) => {
+                nodeMap.set(node.id, { ...node, index: i, x: undefined, y: undefined }); // Initialize x, y
+            });
+
 
             const levels = {};
-            ahpData.nodes.forEach(node => {
+            ahpData.nodes.forEach(node => { // Use original ahpData.nodes to build levels
                 if (!levels[node.level]) levels[node.level] = [];
-                levels[node.level].push(node);
+                levels[node.level].push(node.id); // Store IDs in levels
             });
 
             const xSpacing = 280;
@@ -551,131 +562,125 @@
             let minYUsed = 0;
 
             Object.keys(levels).sort((a,b) => parseInt(a)-parseInt(b)).forEach((levelKey, levelIndex) => {
-                const nodesInLevel = levels[levelKey];
-                const levelWidth = (nodesInLevel.length - 1) * ySpacing;
+                const nodeIdsInLevel = levels[levelKey];
+                const levelWidth = (nodeIdsInLevel.length - 1) * ySpacing;
                 let startY = -levelWidth / 2;
 
                 if (parseInt(levelKey) === 1) startY = 0;
                 if (parseInt(levelKey) === 4) startY -= ySpacing * 1.2;
 
-                nodesInLevel.forEach((node, nodeIndexInLevel) => {
-                    node.x = levelIndex * xSpacing;
-                    node.y = startY + nodeIndexInLevel * ySpacing;
-                    if (node.y > maxYUsed) maxYUsed = node.y;
-                    if (node.y < minYUsed) minYUsed = node.y;
-                    const mappedNode = nodeMap.get(node.id);
-                    if(mappedNode) {
-                        mappedNode.x = node.x;
-                        mappedNode.y = node.y;
+                nodeIdsInLevel.forEach((nodeId, nodeIndexInLevel) => {
+                    const nodeFromMap = nodeMap.get(nodeId); // Get the node object from nodeMap
+                    if (nodeFromMap) {
+                        nodeFromMap.x = levelIndex * xSpacing;
+                        nodeFromMap.y = startY + nodeIndexInLevel * ySpacing;
+                        if (nodeFromMap.y > maxYUsed) maxYUsed = nodeFromMap.y;
+                        if (nodeFromMap.y < minYUsed) minYUsed = nodeFromMap.y;
+                    } else {
+                        console.error("Node ID from levels not found in nodeMap:", nodeId);
                     }
                 });
             });
 
+            // Re-extract nodes with coordinates from the map for traceNodes
+            const positionedNodes = Array.from(nodeMap.values());
+
             const initialEdgeShapes = ahpData.links.map((link, index) => {
-const sourceNode = nodeMap.get(link.source);
-const targetNode = nodeMap.get(link.target);
-                 if (!sourceNode || !targetNode ||
-typeof sourceNode.x === 'undefined' || typeof sourceNode.y === 'undefined' ||
-typeof targetNode.x === 'undefined' || typeof targetNode.y === 'undefined') {
-console.warn(Graph: Missing node or coordinates for link: ${link.source} -> ${link.target}. Source found: ${!!sourceNode}, Target found: ${!!targetNode});
-if (sourceNode) console.warn(Source node (${link.source}) coords: x=${sourceNode.x}, y=${sourceNode.y});
-if (targetNode) console.warn(Target node (${link.target}) coords: x=${targetNode.x}, y=${targetNode.y});
-return null; // Skip this link if data is incomplete
-}
-return {
-id: link-${index},
-type: 'line',
-x0: sourceNode.x,
-y0: sourceNode.y,
-x1: targetNode.x,
-y1: targetNode.y,
-line: { color: '#757575', width: 1.5 },
-opacity: 1
-};
-}).filter(shape => shape !== null); // Remove any nulls from skipped links
+                const sourceNode = nodeMap.get(link.source);
+                const targetNode = nodeMap.get(link.target);
+
+                if (!sourceNode || !targetNode ||
+                    typeof sourceNode.x !== 'number' || typeof sourceNode.y !== 'number' || // Check for number type
+                    typeof targetNode.x !== 'number' || typeof targetNode.y !== 'number') {
+                    console.warn(`Graph: Missing node or valid coordinates for link: ${link.source} -> ${link.target}.`);
+                    if (sourceNode) console.warn(`Source (${link.source}) coords: x=${sourceNode.x}, y=${sourceNode.y}`); else console.warn(`Source node ${link.source} not found in map.`);
+                    if (targetNode) console.warn(`Target (${link.target}) coords: x=${targetNode.x}, y=${targetNode.y}`); else console.warn(`Target node ${link.target} not found in map.`);
+                    return null;
+                }
+                return {
+                    id: `link-${index}`, type: 'line',
+                    x0: sourceNode.x, y0: sourceNode.y,
+                    x1: targetNode.x, y1: targetNode.y,
+                    line: { color: '#757575', width: 1.5 }, opacity: 1
+                };
+            }).filter(shape => shape !== null);
 
             const traceNodes = {
-                x: ahpData.nodes.map(n => nodeMap.get(n.id)?.x),
-                y: ahpData.nodes.map(n => nodeMap.get(n.id)?.y),
-                text: ahpData.nodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
-                mode: 'markers+text',
-                type: 'scatter',
+                x: positionedNodes.map(n => n.x),
+                y: positionedNodes.map(n => n.y),
+                text: positionedNodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
+                mode: 'markers+text', type: 'scatter',
                 marker: {
-                    size: ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)),
-                    color: ahpData.nodes.map(n => {
-                        if (n.level === 1) return '#E040FB'; // Bright Purple (Goal)
-                        if (n.level === 2) return '#BA68C8'; // Medium Purple (Criteria)
-                        if (n.level === 3) return '#4DB6AC'; // Teal (Sub-Criteria)
-                        if (n.level === 4) return '#FFB74D'; // Amber (Alternatives)
+                    size: positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)),
+                    color: positionedNodes.map(n => {
+                        if (n.level === 1) return '#E040FB'; if (n.level === 2) return '#BA68C8';
+                        if (n.level === 3) return '#4DB6AC'; if (n.level === 4) return '#FFB74D';
                         return '#D1C4E9';
                     }),
-                    symbol: ahpData.nodes.map(n => {
-                        if (n.level === 1) return 'diamond-wide';
-                        if (n.level === 2) return 'square';
-                        if (n.level === 3) return 'circle';
-                        if (n.level === 4) return 'hexagon';
+                    symbol: positionedNodes.map(n => {
+                        if (n.level === 1) return 'diamond-wide'; if (n.level === 2) return 'square';
+                        if (n.level === 3) return 'circle'; if (n.level === 4) return 'hexagon';
                         return 'circle';
                     }),
                     line: { width: 2, color: '#F5F5F5' },
-                    opacity: ahpData.nodes.map(() => 1)
+                    opacity: positionedNodes.map(() => 1)
                 },
-                textfont: {
-                    family: 'Segoe UI, Tahoma, sans-serif',
-                    size: 10,
-                    color: '#FFFFFF'
-                },
-                textposition: 'middle right',
-                hoverinfo: 'text',
-                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
-                customdata: ahpData.nodes.map(n => ({ id: n.id }))
+                textfont: { family: 'Segoe UI, Tahoma, sans-serif', size: 10, color: '#FFFFFF' },
+                textposition: 'middle right', hoverinfo: 'text',
+                hovertext: positionedNodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
+                customdata: positionedNodes.map(n => ({ id: n.id, originalIndex: n.index })) // Store original index if needed
             };
 
             const layout = {
-                title: {
-                    text: 'AHP Hierarchy Graph', // Generic title for snippet
-                    font: { size: 22, color: '#E040FB' },
-                    y:0.95
-                },
+                title: { text: 'AHP Hierarchy Graph', font: { size: 22, color: '#E040FB' }, y:0.95 },
                 shapes: initialEdgeShapes,
                 xaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [-xSpacing*0.5, xSpacing * 3.5 + 50] },
                 yaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [minYUsed - ySpacing, maxYUsed + ySpacing] },
-                showlegend: false,
-                hovermode: 'closest',
-                paper_bgcolor: '#4E342E',
-                plot_bgcolor: '#4E342E',
-                margin: { t: 80, b: 40, l: 40, r: 40 },
-                height: 750 // Adjusted height for a standalone snippet
+                showlegend: false, hovermode: 'closest',
+                paper_bgcolor: '#4E342E', plot_bgcolor: '#4E342E',
+                margin: { t: 80, b: 40, l: 40, r: 40 }, height: 750
             };
-            console.log("graphDiv:", graphDiv); // Check if the target div is found
-            console.log("traceNodes data:", JSON.stringify(traceNodes.x), JSON.stringify(traceNodes.y));
-            console.log("initialEdgeShapes data (layout.shapes):", JSON.stringify(initialEdgeShapes));
-            Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
+
+            // Console logs for final check before plotting
+            console.log("Final check - graphDiv:", graphDiv);
+            console.log("Final check - traceNodes.x:", JSON.stringify(traceNodes.x));
+            console.log("Final check - traceNodes.y:", JSON.stringify(traceNodes.y));
+            let validX = traceNodes.x.every(val => typeof val === 'number' && !isNaN(val));
+            let validY = traceNodes.y.every(val => typeof val === 'number' && !isNaN(val));
+            console.log("Are all traceNodes.x valid numbers?", validX);
+            console.log("Are all traceNodes.y valid numbers?", validY);
+            console.log("Final check - initialEdgeShapes:", JSON.stringify(initialEdgeShapes.slice(0,5))); // Log first 5 shapes
+
+            if (validX && validY) {
+                try {
+                    Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
+                } catch (e) {
+                    console.error("Error during Plotly.newPlot():", e);
+                }
+            } else {
+                console.error("Cannot plot: Invalid data in traceNodes.x or traceNodes.y");
+            }
+
 
             graphDiv.on('plotly_hover', function (eventData) {
                 if (eventData.points.length > 0) {
-                    const hoveredNodeIndex = eventData.points[0].pointNumber;
-                    const hoveredNodeId = ahpData.nodes[hoveredNodeIndex].id;
+                    const pointIndex = eventData.points[0].pointNumber; // This index refers to the order in traceNodes.x/y
+                    const hoveredNodeData = positionedNodes[pointIndex]; // Get node from the same array used for plotting
+                    if (!hoveredNodeData) {
+                        console.warn("Hover event: Could not find node data for point index", pointIndex);
+                        return;
+                    }
+                    const hoveredNodeId = hoveredNodeData.id;
 
-                    const connectedLinkIds = [];
+
                     const connectedNodeIds = new Set([hoveredNodeId]);
-
-                    ahpData.links.forEach((link,idx) => {
-                        const sourceNode = nodeMap.get(link.source); // Check nodes exist
-                        const targetNode = nodeMap.get(link.target);
-                        if (!sourceNode || !targetNode) return;
-
-                        if (link.source === hoveredNodeId) {
-                            connectedNodeIds.add(link.target);
-                            connectedLinkIds.push(`link-${idx}`);
-                        }
-                        if (link.target === hoveredNodeId) {
-                            connectedNodeIds.add(link.source);
-                            connectedLinkIds.push(`link-${idx}`);
-                        }
+                    ahpData.links.forEach((link) => { // No index needed for this part of logic
+                        if (link.source === hoveredNodeId) connectedNodeIds.add(link.target);
+                        if (link.target === hoveredNodeId) connectedNodeIds.add(link.source);
                     });
 
-                    const newMarkerOpacities = ahpData.nodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
-                    const newMarkerSizes = ahpData.nodes.map(n => {
+                    const newMarkerOpacities = positionedNodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
+                    const newMarkerSizes = positionedNodes.map(n => {
                         if (n.id === hoveredNodeId) return n.level === 1 ? 32 : (n.level === 4 ? 26 : 28);
                         return n.level === 1 ? 28 : (n.level === 4 ? 22 : 24);
                     });
@@ -686,13 +691,12 @@ opacity: 1
                     }, [0]);
 
                     const updatedShapes = initialEdgeShapes.map(shape => {
-                        if (!shape) return null; // handle cases where a link shape might be null
-                        const linkData = ahpData.links[parseInt(shape.id.split('-')[1])]; // get original link data by index
-                        if (!linkData) return shape; // if link data not found, return original shape
+                        if (!shape) return null;
+                        const linkData = ahpData.links[parseInt(shape.id.split('-')[1])];
+                        if (!linkData) return shape;
 
                         const isConnected = (linkData.source === hoveredNodeId && connectedNodeIds.has(linkData.target)) ||
                                             (linkData.target === hoveredNodeId && connectedNodeIds.has(linkData.source));
-
                         return { ...shape, line: {...shape.line, width: isConnected ? 3 : 1.5, color: isConnected ? '#E040FB' : '#757575'}, opacity: isConnected ? 1 : 0.15 };
                     }).filter(shape => shape !== null);
                     Plotly.relayout(graphDiv, { shapes: updatedShapes });
@@ -701,8 +705,8 @@ opacity: 1
 
             graphDiv.on('plotly_unhover', function (eventData) {
                 Plotly.restyle(graphDiv, {
-                    'marker.opacity': [ahpData.nodes.map(() => 1)],
-                    'marker.size': [ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
+                    'marker.opacity': [positionedNodes.map(() => 1)],
+                    'marker.size': [positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
                 }, [0]);
                  const resetShapes = initialEdgeShapes.map(s => {
                     if (!s) return null;
@@ -711,187 +715,6 @@ opacity: 1
                 Plotly.relayout(graphDiv, { shapes: resetShapes });
             });
         });
-        // --- NEW: Accordion for AHP Calculation Steps ---
-        const calculationSection = document.querySelector('.content-section:has(h2#ahpCalculationSteps)'); // More robust selector
-        if (calculationSection) {
-            const stepsHeadings = calculationSection.querySelectorAll('h3');
-
-            stepsHeadings.forEach(heading => {
-                // Style heading to indicate it's clickable
-                heading.style.cursor = 'pointer';
-                heading.style.position = 'relative'; // For positioning the toggle icon
-
-                // Create toggle icon
-                const toggleIcon = document.createElement('span');
-                toggleIcon.innerHTML = ' ▼'; // Down arrow for collapsed
-                toggleIcon.style.position = 'absolute';
-                toggleIcon.style.right = '10px';
-                toggleIcon.style.transition = 'transform 0.3s ease';
-                heading.appendChild(toggleIcon);
-
-
-                // Get content to toggle (all elements between this h3 and the next h3 or end of section)
-                let contentToToggle = [];
-                let nextElement = heading.nextElementSibling;
-                while (nextElement && nextElement.tagName !== 'H3') {
-                    contentToToggle.push(nextElement);
-                    nextElement = nextElement.nextElementSibling;
-                }
-
-                // Initially hide content (except for the first step)
-                if (heading.id !== "step1CriteriaWeights") { // Keep first step open by default
-                    contentToToggle.forEach(el => el.style.display = 'none');
-                    toggleIcon.innerHTML = ' ▶'; // Right arrow for expanded
-                    toggleIcon.style.transform = 'rotate(-90deg)';
-                } else {
-                     toggleIcon.innerHTML = ' ▼';
-                     toggleIcon.style.transform = 'rotate(0deg)';
-                }
-
-
-                heading.addEventListener('click', () => {
-                    const isHidden = contentToToggle[0] && contentToToggle[0].style.display === 'none';
-                    contentToToggle.forEach(el => {
-                        el.style.display = isHidden ? '' : 'none'; // Toggle display
-                    });
-                    // Update icon
-                    if (isHidden) {
-                        toggleIcon.innerHTML = ' ▼';
-                        toggleIcon.style.transform = 'rotate(0deg)';
-                    } else {
-                        toggleIcon.innerHTML = ' ▶';
-                        toggleIcon.style.transform = 'rotate(-90deg)';
-                    }
-                });
-            });
-        }
-
-        // --- NEW: Interactive Final Score Calculation Display ---
-        const finalScoresList = document.getElementById('finalScoresRecalculated');
-        if (finalScoresList) {
-            const scoreItems = finalScoresList.querySelectorAll('li');
-            scoreItems.forEach(item => {
-                item.style.cursor = 'pointer';
-                item.title = 'Click to see detailed calculation for this alternative'; // Tooltip
-
-                item.addEventListener('mouseenter', () => {
-                    item.style.backgroundColor = '#6D4C41'; // Slightly lighter brown on hover
-                    item.style.transition = 'background-color 0.3s ease';
-                });
-                item.addEventListener('mouseleave', () => {
-                    item.style.backgroundColor = '';
-                });
-
-                item.addEventListener('click', function() {
-                    const altId = this.querySelector('.alternative-label').textContent.split(':')[0].trim(); // e.g., "A1"
-                    // Remove any existing calculation display
-                    const existingDetail = document.getElementById('dynamicCalcDetail');
-                    if (existingDetail) {
-                        existingDetail.remove();
-                    }
-
-                    const detailDiv = document.createElement('div');
-                    detailDiv.id = 'dynamicCalcDetail';
-                    detailDiv.style.backgroundColor = '#4E342E'; // Match graph bg
-                    detailDiv.style.padding = '15px';
-                    detailDiv.style.marginTop = '10px';
-                    detailDiv.style.border = '1px solid #7E57C2'; // Purple border
-                    detailDiv.style.borderRadius = '8px';
-                    detailDiv.style.color = '#F5F5F5'; // White text
-                    detailDiv.style.fontSize = '0.9em';
-
-                    let calculationHTML = `<h4>Detailed Calculation for ${this.querySelector('.alternative-label').textContent}</h4><ul>`;
-
-                    // Assumed structure from your "Step 4" table and "Step 3" global weights
-                    // These would ideally come from a JS data structure if the page was fully dynamic
-                    const globalWeights = {
-                        'SC1.1': 0.140, 'SC1.2': 0.120, 'SC1.3': 0.140,
-                        'SC2.1': 0.100, 'SC2.3': 0.0875, 'SC2.2': 0.0625,
-                        'SC4.3': 0.080, 'SC4.2': 0.060, 'SC4.1': 0.060,
-                        'SC3.2': 0.090, 'SC3.1': 0.060
-                    };
-
-                    // Scores from your table (example for A1 and A4 shown, you'd need all)
-                    const altScores = {
-                        'A1': {'SC1.1':0.30, 'SC1.2':0.15, 'SC1.3':0.25, 'SC2.1':0.20, 'SC2.3':0.10, 'SC2.2':0.30, 'SC4.3':0.20, 'SC4.2':0.15, 'SC4.1':0.25, 'SC3.2':0.15, 'SC3.1':0.10},
-                        'A2': {'SC1.1':0.10, 'SC1.2':0.35, 'SC1.3':0.20, 'SC2.1':0.15, 'SC2.3':0.20, 'SC2.2':0.10, 'SC4.3':0.15, 'SC4.2':0.30, 'SC4.1':0.20, 'SC3.2':0.20, 'SC3.1':0.25},
-                        'A3': {'SC1.1':0.35, 'SC1.2':0.15, 'SC1.3':0.25, 'SC2.1':0.20, 'SC2.3':0.10, 'SC2.2':0.30, 'SC4.3':0.20, 'SC4.2':0.15, 'SC4.1':0.25, 'SC3.2':0.15, 'SC3.1':0.10},
-                        'A4': {'SC1.1':0.15, 'SC1.2':0.25, 'SC1.3':0.15, 'SC2.1':0.30, 'SC2.3':0.35, 'SC2.2':0.25, 'SC4.3':0.30, 'SC4.2':0.35, 'SC4.1':0.20, 'SC3.2':0.35, 'SC3.1':0.30},
-                        'A5': {'SC1.1':0.10, 'SC1.2':0.10, 'SC1.3':0.15, 'SC2.1':0.15, 'SC2.3':0.25, 'SC2.2':0.05, 'SC4.3':0.15, 'SC4.2':0.05, 'SC4.1':0.10, 'SC3.2':0.15, 'SC3.1':0.25}
-                    };
-
-                    let totalScore = 0;
-                    if (altScores[altId]) {
-                        for (const scId in globalWeights) {
-                            if (altScores[altId].hasOwnProperty(scId)) {
-                                const gw = globalWeights[scId];
-                                const as = altScores[altId][scId];
-                                const weightedScore = gw * as;
-                                totalScore += weightedScore;
-                                calculationHTML += `<li>vs ${scId}: (${gw.toFixed(4)} × ${as.toFixed(2)}) = ${weightedScore.toFixed(5)}</li>`;
-                            }
-                        }
-                        calculationHTML += `</ul><p style="font-weight:bold; color:#E040FB;">Total Score: ${totalScore.toFixed(5)}</p>`;
-                    } else {
-                        calculationHTML = `<p>Detailed scores for ${altId} not fully defined in this example script.</p>`;
-                    }
-                    detailDiv.innerHTML = calculationHTML;
-                    this.parentNode.insertBefore(detailDiv, this.nextSibling); // Insert after the clicked item
-                });
-            });
-        }
-
-        // --- NEW: Highlight winning alternative ---
-        const scoresListForHighlight = document.getElementById('finalScoresRecalculated');
-        if (scoresListForHighlight) {
-            let highestScore = -1;
-            let winningItem = null;
-            scoresListForHighlight.querySelectorAll('li').forEach(item => {
-                const scoreText = item.querySelector('.emphasis').textContent;
-                const score = parseFloat(scoreText);
-                if (score > highestScore) {
-                    highestScore = score;
-                    winningItem = item;
-                }
-            });
-            if (winningItem) {
-                winningItem.style.border = '2px solid #E040FB'; // Bright purple border
-                winningItem.style.boxShadow = '0 0 10px #E040FB';
-                winningItem.style.padding = '8px';
-                winningItem.style.borderRadius = '8px';
-                const winnerLabel = winningItem.querySelector('.alternative-label');
-                if(winnerLabel) {
-                     winnerLabel.innerHTML += ' <span style="color:#FFB74D; font-size:0.9em;">(Highest Score)</span>';
-                }
-            }
-        }
-
-        // Add IDs to H3 elements in the calculation section if they don't have them, for accordion to work
-        const calcSectionForIds = document.querySelector('.content-section:has(h2#ahpCalculationSteps)');
-        if (calcSectionForIds) {
-            const h3s = calcSectionForIds.querySelectorAll('h3');
-            h3s.forEach((h3, index) => {
-                if (!h3.id) {
-                    // Create a simple ID based on the step number
-                    // Ensure the H2 has the ID 'ahpCalculationSteps'
-                    const h2Title = h3.closest('.content-section').querySelector('h2');
-                    if (h2Title && h2Title.textContent.includes("AHP Calculation Simulation")) {
-                         h2Title.id = "ahpCalculationSteps"; // Ensure the main h2 has this ID
-                    }
-
-                    // Assign IDs to H3s for accordion logic
-                    if (h3.textContent.includes("Step 1:")) h3.id = "step1CriteriaWeights";
-                    else if (h3.textContent.includes("Step 2:")) h3.id = "step2SubCriteriaWeights";
-                    else if (h3.textContent.includes("Step 3:")) h3.id = "step3GlobalWeights";
-                    else if (h3.textContent.includes("Step 4:")) h3.id = "step4ScoringAlternatives";
-                    else if (h3.textContent.includes("Step 5:")) h3.id = "step5FinalScores";
-                    // Add more else if for other H3s if needed
-                }
-            });
-        }
-
-
-    });
-</script>
+    </script>
 </body>
 </html>
