@@ -15,7 +15,7 @@
             margin: 0;
             padding: 0;
             background-color: #3E2723; /* Darkest Brown */
-            color: #5D4037; /* Off-White */
+            color: #F5F5F5; /* MODIFIED: Using the off-white you defined for the dark theme */
             line-height: 1.6;
         }
 
@@ -50,81 +50,116 @@
             font-size: 2em;
         }
 
-        h3 {
-            color: #BA68C8; /* Lighter Purple */
+        h3 { /* Maintained your dark theme H3 */
+            color: #BA68C8; /* Medium Purple, consistent with H2 accent */
             margin-top: 30px;
             font-size: 1.4em;
         }
+         h4 { /* From dark theme */
+            color: #CE93D8;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
 
-        .content-section {
+
+        .content-section { /* KEEP THIS ONE - for dark theme */
             background-color: #5D4037; /* Dark Brown - lighter than body */
+            color: #F5F5F5; /* Ensure text within content section is light */
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
             margin-bottom: 30px;
         }
 
-        .content-section ul {
-            list-style-type: disc;
+        .content-section ul { /* From dark theme styling for lists */
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .content-section ul ul {
             padding-left: 25px;
         }
 
-        .content-section li {
+        .content-section li { /* From dark theme styling */
             margin-bottom: 12px;
             font-size: 1.05em;
         }
-        .content-section p {
+         .content-section li .criterion-item, .content-section li .subcriterion-item, .content-section li .alternative-item {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .content-section li .criterion-label, .content-section li .subcriterion-label, .content-section li .alternative-label {
+            font-weight: 600;
+            color: #E1BEE7;
+        }
+        .content-section li .description {
+            font-size: 0.95em;
+            color: #CFD8DC;
+            padding-left: 10px;
+        }
+
+        .content-section p { /* From dark theme styling */
             font-size: 1.05em;
             margin-bottom: 15px;
+            color: #F5F5F5; /* Ensure paragraph text is light */
         }
 
-        .content-section {
-            background-color: #FFFFFF;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-
-        #ahpGraph {
+        #ahpGraphContainer { /* From dark theme - this is good */
             width: 100%;
-            /* height: 700px; /* Adjust as needed */
             border-radius: 15px;
-            background-color: #FFFFFF;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #4E342E;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #ahpGraph { /* Ensure this uses dark theme colors or is transparent */
+            width: 100%;
+            border-radius: 15px;
+            /* background-color: #FFFFFF; REMOVE THIS or change to #4E342E or transparent */
+            /* padding: 15px; REMOVE PADDING if #ahpGraphContainer has it */
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); REMOVE if #ahpGraphContainer has it */
         }
 
-        .code-like {
+
+        .code-like { /* From dark theme */
             font-family: 'Courier New', Courier, monospace;
-            background-color: #EFEBE9; /* Lightest brown */
-            padding: 2px 5px;
-            border-radius: 4px;
-            color: #3E2723; /* Darkest brown */
+            background-color: #6D4C41;
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #F5F5F5;
+            font-size: 0.95em;
         }
 
-        strong {
-            color: #4A148C; /* Dark Purple for emphasis */
+        strong, .emphasis { /* From dark theme */
+            color: #BA68C8;
+            font-weight: 600;
         }
+         a { /* From dark theme */
+            color: #CE93D8;
+            text-decoration: none;
+        }
+        a:hover { /* From dark theme */
+            color: #AB47BC;
+            text-decoration: underline;
+        }
+
 
         /* Custom scrollbar for a bit more theme consistency - WebKit browsers */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 12px; /* Adjusted to match dark theme's scrollbar */
         }
 
         ::-webkit-scrollbar-track {
-            background: #E1BEE7; /* Light Purple/Lavender */
+            background: #5D4037; /* Dark Brown */
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: #7B1FA2; /* Medium Purple */
             border-radius: 10px;
+            border: 2px solid #5D4037;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #4A148C; /* Dark Purple */
+            background: #9C27B0; /* Brighter Purple */
         }
 
     </style>
@@ -457,12 +492,189 @@
 
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- Existing Plotly Graph JS (Keep As Is) ---
-        // (Your entire Plotly graph generation and hover/unhover JS from previous response goes here)
-        // ...
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ahpData = {
+                nodes: [
+                    // Level 1: Goal
+                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'Goal' },
 
+                    // Level 2: Criteria
+                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'Criterion 1' },
+                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'Criterion 2' },
+                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'Criterion 3' },
+                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'Criterion 4' },
+
+                    // Level 3: Sub-Criteria for C1
+                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C2
+                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C3
+                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'Sub-Criterion' },
+                    // Level 3: Sub-Criteria for C4
+                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'Sub-Criterion' },
+                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'Sub-Criterion' },
+
+
+                    // Level 4: Alternatives
+                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 1' },
+                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'Alternative 2' },
+                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 3' },
+                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'Alternative 4' },
+                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'Alternative 5' }
+                ],
+                links: [
+                    // Goal to Criteria
+                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
+                    // C1 to its Sub-Criteria
+                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
+                    // C2 to its Sub-Criteria
+                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
+                    // C3 to its Sub-Criteria
+                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
+                    // C4 to its Sub-Criteria
+                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
+                    // Sub-Criteria to Alternatives (Illustrative - connecting all for simplicity, in reality specific connections)
+                    // Connecting all sub-criteria to all alternatives for visual representation of the layer.
+                    // In practice, each alternative is evaluated against each sub-criterion.
+                    'SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3'
+                ].flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
+                 .concat([ // Adding goal to criteria links back as flatMap overwrote them
+                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
+                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
+                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
+                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
+                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
+                 ])
+            };
+
+            const nodeMap = new Map(ahpData.nodes.map(node => [node.id, node]));
+
+            // Assign x, y positions
+            const levels = {};
+            ahpData.nodes.forEach(node => {
+                if (!levels[node.level]) levels[node.level] = [];
+                levels[node.level].push(node);
+            });
+
+            const xSpacing = 250;
+            const ySpacing = 120;
+            let maxYUsed = 0;
+
+            Object.keys(levels).sort((a,b) => a-b).forEach((levelKey, levelIndex) => {
+                const nodesInLevel = levels[levelKey];
+                const levelWidth = (nodesInLevel.length - 1) * ySpacing;
+                let startY = -levelWidth / 2;
+                if (levelKey == 1) startY = 0; // Center the goal
+                if (levelKey == 4) startY -= ySpacing*1.5; // Adjust alternatives start
+
+                nodesInLevel.forEach((node, nodeIndex) => {
+                    node.x = levelIndex * xSpacing;
+                    node.y = startY + nodeIndex * ySpacing;
+                    if (node.y > maxYUsed) maxYUsed = node.y;
+                });
+            });
+
+
+            const edgeShapes = [];
+            ahpData.links.forEach(link => {
+                const sourceNode = nodeMap.get(link.source);
+                const targetNode = nodeMap.get(link.target);
+                if (sourceNode && targetNode) {
+                    edgeShapes.push({
+                        type: 'line',
+                        x0: sourceNode.x,
+                        y0: sourceNode.y,
+                        x1: targetNode.x,
+                        y1: targetNode.y,
+                        line: {
+                            color: '#D7CCC8', // Light Brown/Beige for lines
+                            width: 1.5
+                        }
+                    });
+                }
+            });
+
+            const traceNodes = {
+                x: ahpData.nodes.map(n => n.x),
+                y: ahpData.nodes.map(n => n.y),
+                text: ahpData.nodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
+                mode: 'markers+text',
+                type: 'scatter',
+                marker: {
+                    size: 20,
+                    color: ahpData.nodes.map(n => {
+                        if (n.level === 1) return '#4A148C'; // Dark Purple (Goal)
+                        if (n.level === 2) return '#7B1FA2'; // Medium Purple (Criteria)
+                        if (n.level === 3) return '#795548'; // Medium Brown (Sub-Criteria)
+                        if (n.level === 4) return '#5D4037'; // Dark Brown (Alternatives)
+                        return '#E1BEE7';
+                    }),
+                    symbol: ahpData.nodes.map(n => {
+                        if (n.level === 1) return 'diamond';
+                        if (n.level === 2) return 'square';
+                        if (n.level === 3) return 'circle';
+                        if (n.level === 4) return 'hexagon2';
+                        return 'circle';
+                    }),
+                    line: {
+                        width: 2,
+                        color: '#424242' // Dark Grey border for markers
+                    }
+                },
+                textfont: {
+                    family: 'Segoe UI, Tahoma, sans-serif',
+                    size: 10,
+                    color: '#3E2723' // Darkest brown text for nodes
+                },
+                textposition: 'middle right',
+                hoverinfo: 'text',
+                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`)
+            };
+
+            const layout = {
+                title: {
+                    text: 'AHP Hierarchy: Coffee Offering Selection',
+                    font: {
+                        size: 20,
+                        color: '#4A148C' // Dark Purple
+                    }
+                },
+                shapes: edgeShapes,
+                xaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [-xSpacing*0.5, xSpacing * 3.5] // Adjusted range
+                },
+                yaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [-maxYUsed - ySpacing, maxYUsed + ySpacing] // Adjusted range
+                },
+                showlegend: false,
+                hovermode: 'closest',
+                paper_bgcolor: '#FFFFFF', // Background of the plotting area
+                plot_bgcolor: '#FFFFFF',  // Background of the graph itself
+                margin: { t: 80, b: 40, l: 40, r: 40 },
+                height: 800 // Increased height for better spacing
+            };
+
+            Plotly.newPlot('ahpGraph', [traceNodes], layout);
+
+            // Small fix for link generation - ensure only unique links for goal to criteria etc.
+            // The flatMap approach for alternatives is good, but we need to preserve the earlier defined links.
+            // The .concat method used in the data structure above is a better way.
+            // The current link generation for Sub-Criteria to Alternatives is illustrative, showing layer connection.
+            // A true AHP evaluation would have individual weightings.
+        });
         // --- NEW: Accordion for AHP Calculation Steps ---
         const calculationSection = document.querySelector('.content-section:has(h2#ahpCalculationSteps)'); // More robust selector
         if (calculationSection) {
