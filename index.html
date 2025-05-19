@@ -52,15 +52,41 @@
             font-weight: 600;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
+        
+        h2 { /* Modified existing h2 rule */
+            color: #D1C4E9; /* Ungu Lavender muda untuk judul bagian agar kontras di atas .content-section */
+            border-bottom: 2px solid #9575CD; /* Ungu Lavender yang lebih dalam */
+            padding-bottom: 12px;
+            margin-top: 0; /* Hapus margin atas default karena .content-section sudah punya margin */
+            margin-bottom: 25px; /* Jarak ke konten di bawahnya */
+            font-size: 2.2em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            /* Added for collapsibility */
+            cursor: pointer;
+            position: relative; /* For positioning the ::after pseudo-element */
+            padding-right: 40px; /* Make space for the arrow icon */
+        }
 
-        h2 {
-        color: #D1C4E9; /* Ungu Lavender muda untuk judul bagian agar kontras di atas .content-section */
-        border-bottom: 2px solid #9575CD; /* Ungu Lavender yang lebih dalam */
-        padding-bottom: 12px;
-        margin-top: 0; /* Hapus margin atas default karena .content-section sudah punya margin */
-        margin-bottom: 25px; /* Jarak ke konten di bawahnya */
-        font-size: 2.2em;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        .content-section h2::after {
+            content: '\25BC'; /* Unicode for down-pointing triangle (expanded) */
+            font-family: sans-serif; /* Generic font for better character rendering */
+            color: #D1C4E9; /* Arrow color matching H2 text */
+            position: absolute;
+            right: 15px; /* Position from the right edge of H2 */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7em; /* Adjust arrow size relative to H2 font size */
+            transition: transform 0.2s ease-in-out; /* Smooth rotation for some effects */
+        }
+
+        .content-section h2.collapsed::after {
+            content: '\25B6'; /* Unicode for right-pointing triangle (collapsed) */
+            /* If you prefer rotating the down arrow: */
+            /* transform: translateY(-50%) rotate(-90deg); */
+        }
+
+        .collapsible-content.hidden {
+            display: none;
         }
 
         h3 { /* Maintained your dark theme H3 */
@@ -555,269 +581,307 @@
 <footer>
   <p>I Dewa Gede Vrischika Sedanayoga - 053152901. Universitas Indonesia. © <span id="copyright-year"></span> </p>
 </footer>
-    
 <script>
     document.getElementById("copyright-year").textContent = new Date().getFullYear();
+
     document.addEventListener('DOMContentLoaded', function () {
-        // Ensure the graphDiv exists
+        // --- 1. Setup for Collapsible Sections (DOM manipulation and event listeners) ---
+        const contentSections = document.querySelectorAll('.content-section');
+        const sectionsToManageCollapseState = []; // To store headers and their content wrappers
+
+        contentSections.forEach(section => {
+            const headers = section.querySelectorAll('h2');
+
+            headers.forEach((header) => {
+                const contentWrapper = document.createElement('div');
+                contentWrapper.classList.add('collapsible-content');
+
+                // Collect all sibling elements after this h2 until the next h2
+                let currentElement = header.nextElementSibling;
+                const elementsToWrap = [];
+                while (currentElement && currentElement.tagName !== 'H2') {
+                    elementsToWrap.push(currentElement);
+                    currentElement = currentElement.nextElementSibling;
+                }
+
+                // Move collected elements into the new wrapper
+                elementsToWrap.forEach(el => contentWrapper.appendChild(el));
+
+                // Insert the wrapper into the DOM right after the header
+                header.parentNode.insertBefore(contentWrapper, header.nextSibling);
+
+                // Add click listener to the header
+                header.addEventListener('click', function () {
+                    contentWrapper.classList.toggle('hidden');
+                    this.classList.toggle('collapsed'); // Used by CSS to change arrow
+                });
+
+                // Store for initial collapse after Plotly rendering
+                sectionsToManageCollapseState.push({ header, contentWrapper });
+            });
+        });
+
+        // --- 2. Plotly Graph Setup and Rendering (Your existing Plotly code) ---
         const graphDiv = document.getElementById('ahpGraph');
         if (!graphDiv) {
             console.error("Error: The div with ID 'ahpGraph' was not found in the DOM.");
-            return;
+            // If graphDiv is essential and not found, we might not proceed or handle it.
+            // For this example, Plotly code below will be skipped if graphDiv is missing.
         }
-        if (typeof Plotly === 'undefined') {
+        
+        if (graphDiv && typeof Plotly === 'undefined') { // Check if graphDiv exists before checking Plotly
             console.error("Error: Plotly library is not loaded. Make sure the script tag for Plotly is in your HTML head.");
-            return;
         }
 
-        const ahpData = {
-            nodes: [
-                // Level 1: Goal
-                { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'GOAL' }, // Changed title for consistency
-                // Level 2: Criteria
-                { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'CRITERION' },
-                { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'CRITERION' },
-                { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'CRITERION' },
-                { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'CRITERION' },
-                // Level 3: Sub-Criteria
-                { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
-                { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
-                { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
-                { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
-                { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
-                // Level 4: Alternatives
-                { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 1' },
-                { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'ALTERNATIVE 2' },
-                { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 3' },
-                { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'ALTERNATIVE 4' },
-                { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'ALTERNATIVE 5' }
-            ],
-            links: [
-                // Goal to Criteria
-                { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
-                // C1 to its Sub-Criteria
-                { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
-                // C2 to its Sub-Criteria
-                { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
-                // C3 to its Sub-Criteria
-                { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
-                // C4 to its Sub-Criteria
-                { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-            ].concat( // Links from Sub-Criteria to Alternatives
-                ['SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3']
-                .flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
-            )
-        };
+        if (graphDiv && typeof Plotly !== 'undefined') { // Proceed only if graphDiv and Plotly exist
+            const ahpData = {
+                nodes: [
+                    // Level 1: Goal
+                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'GOAL' },
+                    // Level 2: Criteria
+                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'CRITERION' },
+                    // Level 3: Sub-Criteria
+                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
+                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
+                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    // Level 4: Alternatives
+                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 1' },
+                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'ALTERNATIVE 2' },
+                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 3' },
+                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'ALTERNATIVE 4' },
+                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'ALTERNATIVE 5' }
+                ],
+                links: [
+                    // Goal to Criteria
+                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
+                    // C1 to its Sub-Criteria
+                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
+                    // C2 to its Sub-Criteria
+                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
+                    // C3 to its Sub-Criteria
+                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
+                    // C4 to its Sub-Criteria
+                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
+                ].concat( // Links from Sub-Criteria to Alternatives
+                    ['SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3']
+                    .flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
+                )
+            };
 
-        // Create a map for quick node lookup AND to store coordinates
-        const nodeMap = new Map();
-        ahpData.nodes.forEach((node, i) => {
-            // Store a copy of the node to avoid modifying the original ahpData.nodes if it's used elsewhere
-            // and initialize x, y
-            nodeMap.set(node.id, { ...node, originalIndex: i, x: undefined, y: undefined });
-        });
+            const nodeMap = new Map();
+            ahpData.nodes.forEach((node, i) => {
+                nodeMap.set(node.id, { ...node, originalIndex: i, x: undefined, y: undefined });
+            });
 
-        const levels = {};
-        // Use nodeMap's values (which are our node copies) to build levels
-        // This ensures we are working with the objects that will store coordinates
-        Array.from(nodeMap.values()).forEach(node => {
-            if (!levels[node.level]) levels[node.level] = [];
-            levels[node.level].push(node.id); // Store IDs for easier lookup
-        });
+            const levels = {};
+            Array.from(nodeMap.values()).forEach(node => {
+                if (!levels[node.level]) levels[node.level] = [];
+                levels[node.level].push(node.id);
+            });
 
-        const xSpacing = 280; // Adjusted for better spacing
-        const ySpacing = 110; // Adjusted
-        let maxYUsed = 0;
-        let minYUsed = 0; // To help center the y-axis
+            const xSpacing = 280; 
+            const ySpacing = 110; 
+            let maxYUsed = 0;
+            let minYUsed = 0; 
 
-        Object.keys(levels).sort((a,b) => parseInt(a)-parseInt(b)).forEach((levelKey, levelIndex) => {
-            const nodeIdsInLevel = levels[levelKey];
-            const levelWidth = (nodeIdsInLevel.length - 1) * ySpacing;
-            let startY = -levelWidth / 2;
+            Object.keys(levels).sort((a,b) => parseInt(a)-parseInt(b)).forEach((levelKey, levelIndex) => {
+                const nodeIdsInLevel = levels[levelKey];
+                const levelWidth = (nodeIdsInLevel.length - 1) * ySpacing;
+                let startY = -levelWidth / 2;
 
-            if (parseInt(levelKey) === 1) startY = 0; // Center the goal
-            if (parseInt(levelKey) === 4) startY -= ySpacing * 1.2; // Adjust alternatives start slightly
+                if (parseInt(levelKey) === 1) startY = 0; 
+                if (parseInt(levelKey) === 4) startY -= ySpacing * 1.2; 
 
-            nodeIdsInLevel.forEach((nodeId, nodeIndexInLevel) => {
-                const nodeFromMap = nodeMap.get(nodeId); // Get the node object from nodeMap
-                if (nodeFromMap) {
-                    nodeFromMap.x = levelIndex * xSpacing;
-                    nodeFromMap.y = startY + nodeIndexInLevel * ySpacing;
-                    if (nodeFromMap.y > maxYUsed) maxYUsed = nodeFromMap.y;
-                    if (nodeFromMap.y < minYUsed) minYUsed = nodeFromMap.y;
+                nodeIdsInLevel.forEach((nodeId, nodeIndexInLevel) => {
+                    const nodeFromMap = nodeMap.get(nodeId); 
+                    if (nodeFromMap) {
+                        nodeFromMap.x = levelIndex * xSpacing;
+                        nodeFromMap.y = startY + nodeIndexInLevel * ySpacing;
+                        if (nodeFromMap.y > maxYUsed) maxYUsed = nodeFromMap.y;
+                        if (nodeFromMap.y < minYUsed) minYUsed = nodeFromMap.y;
+                    } else {
+                        console.error("Node ID from levels not found in nodeMap during positioning:", nodeId);
+                    }
+                });
+            });
+
+            const positionedNodes = Array.from(nodeMap.values());
+
+            const edgeShapes = [];
+            ahpData.links.forEach((link, index) => {
+                const sourceNode = nodeMap.get(link.source);
+                const targetNode = nodeMap.get(link.target);
+                if (sourceNode && targetNode &&
+                    typeof sourceNode.x === 'number' && typeof sourceNode.y === 'number' &&
+                    typeof targetNode.x === 'number' && typeof targetNode.y === 'number') {
+                    edgeShapes.push({
+                        id: `link-${index}`, 
+                        type: 'line',
+                        x0: sourceNode.x, y0: sourceNode.y,
+                        x1: targetNode.x, y1: targetNode.y,
+                        line: {
+                            color: '#757575', 
+                            width: 1.5
+                        },
+                        opacity: 1 
+                    });
                 } else {
-                    console.error("Node ID from levels not found in nodeMap during positioning:", nodeId);
+                    console.warn(`Skipping link due to missing node or coordinates: ${link.source} -> ${link.target}`);
                 }
             });
-        });
 
-        // Use the nodes from nodeMap (which now have coordinates) for traces and shapes
-        const positionedNodes = Array.from(nodeMap.values());
-
-        const edgeShapes = [];
-        ahpData.links.forEach((link, index) => {
-            const sourceNode = nodeMap.get(link.source);
-            const targetNode = nodeMap.get(link.target);
-            if (sourceNode && targetNode &&
-                typeof sourceNode.x === 'number' && typeof sourceNode.y === 'number' &&
-                typeof targetNode.x === 'number' && typeof targetNode.y === 'number') {
-                edgeShapes.push({
-                    id: `link-${index}`, // Add ID for hover interaction
-                    type: 'line',
-                    x0: sourceNode.x, y0: sourceNode.y,
-                    x1: targetNode.x, y1: targetNode.y,
+            const traceNodes = {
+                x: positionedNodes.map(n => n.x),
+                y: positionedNodes.map(n => n.y),
+                text: positionedNodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
+                mode: 'markers+text',
+                type: 'scatter',
+                marker: {
+                    size: positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)),
+                    color: positionedNodes.map(n => { 
+                        if (n.level === 1) return '#E040FB'; 
+                        if (n.level === 2) return '#BA68C8'; 
+                        if (n.level === 3) return '#4DB6AC'; 
+                        if (n.level === 4) return '#FFB74D'; 
+                        return '#D1C4E9'; 
+                    }),
+                    symbol: positionedNodes.map(n => { 
+                        if (n.level === 1) return 'diamond-wide';
+                        if (n.level === 2) return 'square';
+                        if (n.level === 3) return 'circle';
+                        if (n.level === 4) return 'hexagon';
+                        return 'circle';
+                    }),
                     line: {
-                        color: '#757575', // MODIFIED: Neutral light grey for links on dark theme
-                        width: 1.5
+                        width: 2,
+                        color: '#F5F5F5' 
                     },
-                    opacity: 1 // For hover effect later
+                    opacity: positionedNodes.map(() => 1) 
+                },
+                textfont: {
+                    family: 'Segoe UI, Tahoma, sans-serif',
+                    size: 10,
+                    color: '#FFFFFF' 
+                },
+                textposition: 'middle right',
+                hoverinfo: 'text', 
+                hovertext: positionedNodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
+                customdata: positionedNodes.map(n => ({ id: n.id })) 
+            };
+
+            const layout = {
+                title: {
+                    text: 'AHP Hierarchy: Coffee Offering Selection',
+                    font: {
+                        size: 22, 
+                        color: '#E040FB' 
+                    },
+                    y: 0.95 
+                },
+                shapes: edgeShapes,
+                xaxis: {
+                    showgrid: false, zeroline: false, showticklabels: false,
+                    range: [-xSpacing * 0.5, xSpacing * 3.5 + 50] 
+                },
+                yaxis: {
+                    showgrid: false, zeroline: false, showticklabels: false,
+                    range: [minYUsed - ySpacing, maxYUsed + ySpacing] 
+                },
+                showlegend: false,
+                hovermode: 'closest',
+                paper_bgcolor: '#4E342E', 
+                plot_bgcolor: '#4E342E',  
+                margin: { t: 80, b: 40, l: 40, r: 40 },
+                height: 750 
+            };
+
+            let allNodesHaveCoords = positionedNodes.every(n => typeof n.x === 'number' && typeof n.y === 'number');
+            if (!allNodesHaveCoords) {
+                console.error("CRITICAL: Not all nodes have valid coordinates. Aborting plot.");
+                positionedNodes.forEach(n => {
+                    if (typeof n.x !== 'number' || typeof n.y !== 'number') {
+                        console.error(`Node ${n.id} has invalid coords: x=${n.x}, y=${n.y}`);
+                    }
                 });
             } else {
-                console.warn(`Skipping link due to missing node or coordinates: ${link.source} -> ${link.target}`);
+                 try {
+                    Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
+                } catch (e) {
+                    console.error("Error during Plotly.newPlot():", e);
+                }
             }
-        });
 
-        const traceNodes = {
-            x: positionedNodes.map(n => n.x),
-            y: positionedNodes.map(n => n.y),
-            text: positionedNodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
-            mode: 'markers+text',
-            type: 'scatter',
-            marker: {
-                size: positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)), // Dynamic sizing
-                color: positionedNodes.map(n => { // MODIFIED: Dark theme marker colors
-                    if (n.level === 1) return '#E040FB'; // Bright Purple (Goal)
-                    if (n.level === 2) return '#BA68C8'; // Medium Purple (Criteria)
-                    if (n.level === 3) return '#4DB6AC'; // Teal (Sub-Criteria)
-                    if (n.level === 4) return '#FFB74D'; // Amber (Alternatives)
-                    return '#D1C4E9'; // Fallback light purple
-                }),
-                symbol: positionedNodes.map(n => { // More distinct symbols
-                    if (n.level === 1) return 'diamond-wide';
-                    if (n.level === 2) return 'square';
-                    if (n.level === 3) return 'circle';
-                    if (n.level === 4) return 'hexagon';
-                    return 'circle';
-                }),
-                line: {
-                    width: 2,
-                    color: '#F5F5F5' // MODIFIED: White border for markers to pop on dark bg
-                },
-                opacity: positionedNodes.map(() => 1) // For hover effect
-            },
-            textfont: {
-                family: 'Segoe UI, Tahoma, sans-serif',
-                size: 10,
-                color: '#FFFFFF' // MODIFIED: White text for labels
-            },
-            textposition: 'middle right',
-            hoverinfo: 'text', // Use hovertext for custom tooltip
-            hovertext: positionedNodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
-            customdata: positionedNodes.map(n => ({ id: n.id })) // Store node ID for hover events
-        };
 
-        const layout = {
-            title: {
-                text: 'AHP Hierarchy: Coffee Offering Selection',
-                font: {
-                    size: 22, // Increased size slightly
-                    color: '#E040FB' // MODIFIED: Bright Purple for title
-                },
-                y: 0.95 // Adjust title position if needed
-            },
-            shapes: edgeShapes,
-            xaxis: {
-                showgrid: false, zeroline: false, showticklabels: false,
-                range: [-xSpacing * 0.5, xSpacing * 3.5 + 50] // Expanded range slightly
-            },
-            yaxis: {
-                showgrid: false, zeroline: false, showticklabels: false,
-                range: [minYUsed - ySpacing, maxYUsed + ySpacing] // Dynamic range based on content
-            },
-            showlegend: false,
-            hovermode: 'closest',
-            paper_bgcolor: '#4E342E', // MODIFIED: Dark brown graph area background
-            plot_bgcolor: '#4E342E',  // MODIFIED: Dark brown plot background
-            margin: { t: 80, b: 40, l: 40, r: 40 },
-            height: 750 // Adjusted height
-        };
+            // --- Plotly Hover Interactivity ---
+            graphDiv.on('plotly_hover', function (eventData) {
+                if (eventData.points.length > 0) {
+                    const pointIndex = eventData.points[0].pointNumber;
+                    const hoveredNode = positionedNodes[pointIndex]; 
+                    if (!hoveredNode) return;
+                    const hoveredNodeId = hoveredNode.id;
 
-        // Final check before plotting
-        let allNodesHaveCoords = positionedNodes.every(n => typeof n.x === 'number' && typeof n.y === 'number');
-        if (!allNodesHaveCoords) {
-            console.error("CRITICAL: Not all nodes have valid coordinates. Aborting plot.");
-            positionedNodes.forEach(n => {
-                if (typeof n.x !== 'number' || typeof n.y !== 'number') {
-                    console.error(`Node ${n.id} has invalid coords: x=${n.x}, y=${n.y}`);
+                    const connectedNodeIds = new Set([hoveredNodeId]);
+                    ahpData.links.forEach((link) => {
+                        if (link.source === hoveredNodeId) connectedNodeIds.add(link.target);
+                        if (link.target === hoveredNodeId) connectedNodeIds.add(link.source);
+                    });
+
+                    const newMarkerOpacities = positionedNodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
+                    const newMarkerSizes = positionedNodes.map(n => {
+                        if (n.id === hoveredNodeId) return n.level === 1 ? 32 : (n.level === 4 ? 26 : 28);
+                        return n.level === 1 ? 28 : (n.level === 4 ? 22 : 24);
+                    });
+
+                    Plotly.restyle(graphDiv, {
+                        'marker.opacity': [newMarkerOpacities],
+                        'marker.size': [newMarkerSizes]
+                    }, [0]);
+
+                    const updatedShapes = edgeShapes.map(shape => {
+                        if (!shape) return null;
+                        const linkData = ahpData.links[parseInt(shape.id.split('-')[1])];
+                        if (!linkData) return shape;
+
+                        const isConnected = (linkData.source === hoveredNodeId && connectedNodeIds.has(linkData.target)) ||
+                                            (linkData.target === hoveredNodeId && connectedNodeIds.has(linkData.source));
+                        return { ...shape, line: {...shape.line, width: isConnected ? 3 : 1.5, color: isConnected ? '#E040FB' : '#757575'}, opacity: isConnected ? 1 : 0.15 };
+                    }).filter(shape => shape !== null);
+                    Plotly.relayout(graphDiv, { shapes: updatedShapes });
                 }
             });
-            return;
-        }
 
-        try {
-            Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
-        } catch (e) {
-            console.error("Error during Plotly.newPlot():", e);
-        }
-
-
-        // --- Hover Interactivity ---
-        graphDiv.on('plotly_hover', function (eventData) {
-            if (eventData.points.length > 0) {
-                const pointIndex = eventData.points[0].pointNumber;
-                const hoveredNode = positionedNodes[pointIndex]; // Get from the same array used for plotting
-                if (!hoveredNode) return;
-                const hoveredNodeId = hoveredNode.id;
-
-                const connectedNodeIds = new Set([hoveredNodeId]);
-                ahpData.links.forEach((link) => {
-                    if (link.source === hoveredNodeId) connectedNodeIds.add(link.target);
-                    if (link.target === hoveredNodeId) connectedNodeIds.add(link.source);
-                });
-
-                const newMarkerOpacities = positionedNodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
-                const newMarkerSizes = positionedNodes.map(n => {
-                    if (n.id === hoveredNodeId) return n.level === 1 ? 32 : (n.level === 4 ? 26 : 28);
-                    return n.level === 1 ? 28 : (n.level === 4 ? 22 : 24);
-                });
-
+            graphDiv.on('plotly_unhover', function (eventData) {
                 Plotly.restyle(graphDiv, {
-                    'marker.opacity': [newMarkerOpacities],
-                    'marker.size': [newMarkerSizes]
+                    'marker.opacity': [positionedNodes.map(() => 1)],
+                    'marker.size': [positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
                 }, [0]);
-
-                const updatedShapes = edgeShapes.map(shape => {
-                    if (!shape) return null;
-                    const linkData = ahpData.links[parseInt(shape.id.split('-')[1])];
-                    if (!linkData) return shape;
-
-                    const isConnected = (linkData.source === hoveredNodeId && connectedNodeIds.has(linkData.target)) ||
-                                        (linkData.target === hoveredNodeId && connectedNodeIds.has(linkData.source));
-                    return { ...shape, line: {...shape.line, width: isConnected ? 3 : 1.5, color: isConnected ? '#E040FB' : '#757575'}, opacity: isConnected ? 1 : 0.15 };
+                const resetShapes = edgeShapes.map(s => {
+                    if (!s) return null;
+                    return ({...s, line: {...s.line, width: 1.5, color: '#757575'}, opacity: 1});
                 }).filter(shape => shape !== null);
-                Plotly.relayout(graphDiv, { shapes: updatedShapes });
-            }
+                Plotly.relayout(graphDiv, { shapes: resetShapes });
+            });
+        } // End of if (graphDiv && typeof Plotly !== 'undefined')
+
+        // --- 3. Initially Collapse Sections ---
+        // This runs after Plotly has had a chance to render the graph in its visible state.
+        sectionsToManageCollapseState.forEach(item => {
+            item.contentWrapper.classList.add('hidden');
+            item.header.classList.add('collapsed');
         });
 
-        graphDiv.on('plotly_unhover', function (eventData) {
-            Plotly.restyle(graphDiv, {
-                'marker.opacity': [positionedNodes.map(() => 1)],
-                'marker.size': [positionedNodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
-            }, [0]);
-             const resetShapes = edgeShapes.map(s => {
-                if (!s) return null;
-                return ({...s, line: {...s.line, width: 1.5, color: '#757575'}, opacity: 1});
-            }).filter(shape => shape !== null);
-            Plotly.relayout(graphDiv, { shapes: resetShapes });
-        });
-
-    });
+    }); // End of DOMContentLoaded
 </script>
 </body>
 </html>
