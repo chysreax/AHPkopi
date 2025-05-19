@@ -67,27 +67,31 @@
             padding-right: 40px; /* Make space for the arrow icon */
         }
 
-        .content-section h2::after {
-            content: '\25BC'; /* Unicode for down-pointing triangle (expanded) */
-            font-family: sans-serif; /* Generic font for better character rendering */
-            color: #D1C4E9; /* Arrow color matching H2 text */
+.content-section h2::after {
+            content: '\25BC'; /* ALWAYS Down-pointing triangle */
+            font-family: sans-serif;
+            color: #D1C4E9;
             position: absolute;
-            right: 15px; /* Position from the right edge of H2 */
+            right: 15px;
             top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.7em; /* Adjust arrow size relative to H2 font size */
-            transition: transform 0.2s ease-in-out; /* Smooth rotation for some effects */
+            transform: translateY(-50%) rotate(0deg); /* Initial state: not rotated */
+            font-size: 0.7em;
+            transition: transform 0.3s ease-in-out; /* Ensure this matches or complements content transition */
         }
 
         .content-section h2.collapsed::after {
-            content: '\25B6'; /* Unicode for right-pointing triangle (collapsed) */
-            /* If you prefer rotating the down arrow: */
-            /* transform: translateY(-50%) rotate(-90deg); */
+            content: '\25B6';
+            transform: translateY(-50%) rotate(-90deg);
         }
+.collapsible-content {
+    overflow: hidden; 
+    transition: max-height 0.35s ease-in-out; 
+    max-height: 2000px; 
+}
 
-        .collapsible-content.hidden {
-            display: none;
-        }
+.collapsible-content.hidden {
+    max-height: 0;
+}
 
         h3 { /* Maintained your dark theme H3 */
         color: #E1BEE7; /* Ungu pink muda */
