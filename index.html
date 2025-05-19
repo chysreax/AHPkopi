@@ -293,7 +293,7 @@
             <h3>Step 3: Calculating Global Weights for Sub-Criteria</h3>
             <p>The global weight of a sub-criterion shows its importance relative to the overall Goal. It's calculated as: <span class="code-like">Parent Criterion Weight × Sub-Criterion Local Weight</span>.</p>
             <!-- This table could be generated dynamically with JS, but for HTML-only: -->
-            <p style="font-size: 0.9em; color: #CFD8DC;">(Example Calculation: SC1.1 Global Weight = 0.40 (C1) * 0.35 (SC1.1 Local) = 0.140)</p>
+            <p style="font-size: 0.9em; color: #795548;">(Example Calculation: SC1.1 Global Weight = 0.40 (C1) * 0.35 (SC1.1 Local) = 0.140)</p>
             <ul>
                 <li>SC1.1 (Clarity): 0.40 * 0.35 = <span class="emphasis">0.140</span></li>
                 <li>SC1.2 (Body): 0.40 * 0.30 = <span class="emphasis">0.120</span></li>
@@ -393,7 +393,7 @@
             <p>The final score for each alternative is the sum of its weighted scores across all sub-criteria. Weighted Score = <span class="code-like">Sub-Criterion Global Weight × Alternative's Score on that Sub-Criterion</span>.</p>
 
             <p>Let's calculate for <span class="alternative-label">Alternative 1: Aceh Gayo (Washed) via V60</span>:</p>
-            <ul style="font-size:0.9em; color: #CFD8DC;">
+            <ul style="font-size:0.9em; color: #795548;">
                 <li>vs SC1.1: 0.140 * 0.30 = 0.0420</li>
                 <li>vs SC1.2: 0.120 * 0.15 = 0.0180</li>
                 <li>vs SC1.3: 0.140 * 0.25 = 0.0350</li>
@@ -418,7 +418,7 @@
                 <li><span class="alternative-label">A5: Aceh Gayo (Washed) via Tubruk:</span> <span class="emphasis">0.1360</span> (Assumed calculation)</li>
             </ul>
              <p>(Example detailed calculation for A4 to show the process):</p>
-            <ul style="font-size:0.9em; color: #CFD8DC;">
+            <ul style="font-size:0.9em; color: #795548;">
                 <li>A4 vs SC1.1: 0.140 * 0.15 = 0.0210</li>
                 <li>A4 vs SC1.2: 0.120 * 0.25 = 0.0300</li>
                 <li>A4 vs SC1.3: 0.140 * 0.15 = 0.0210</li>
@@ -457,189 +457,193 @@
 
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ahpData = {
-                nodes: [
-                    // Level 1: Goal
-                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'Goal' },
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Existing Plotly Graph JS (Keep As Is) ---
+        // (Your entire Plotly graph generation and hover/unhover JS from previous response goes here)
+        // ...
 
-                    // Level 2: Criteria
-                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'Criterion 1' },
-                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'Criterion 2' },
-                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'Criterion 3' },
-                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'Criterion 4' },
+        // --- NEW: Accordion for AHP Calculation Steps ---
+        const calculationSection = document.querySelector('.content-section:has(h2#ahpCalculationSteps)'); // More robust selector
+        if (calculationSection) {
+            const stepsHeadings = calculationSection.querySelectorAll('h3');
 
-                    // Level 3: Sub-Criteria for C1
-                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C2
-                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C3
-                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C4
-                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'Sub-Criterion' },
+            stepsHeadings.forEach(heading => {
+                // Style heading to indicate it's clickable
+                heading.style.cursor = 'pointer';
+                heading.style.position = 'relative'; // For positioning the toggle icon
+
+                // Create toggle icon
+                const toggleIcon = document.createElement('span');
+                toggleIcon.innerHTML = ' ▼'; // Down arrow for collapsed
+                toggleIcon.style.position = 'absolute';
+                toggleIcon.style.right = '10px';
+                toggleIcon.style.transition = 'transform 0.3s ease';
+                heading.appendChild(toggleIcon);
 
 
-                    // Level 4: Alternatives
-                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 1' },
-                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'Alternative 2' },
-                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 3' },
-                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'Alternative 4' },
-                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'Alternative 5' }
-                ],
-                links: [
-                    // Goal to Criteria
-                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
-                    // C1 to its Sub-Criteria
-                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
-                    // C2 to its Sub-Criteria
-                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
-                    // C3 to its Sub-Criteria
-                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
-                    // C4 to its Sub-Criteria
-                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-                    // Sub-Criteria to Alternatives (Illustrative - connecting all for simplicity, in reality specific connections)
-                    // Connecting all sub-criteria to all alternatives for visual representation of the layer.
-                    // In practice, each alternative is evaluated against each sub-criterion.
-                    'SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3'
-                ].flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
-                 .concat([ // Adding goal to criteria links back as flatMap overwrote them
-                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
-                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
-                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
-                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
-                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-                 ])
-            };
+                // Get content to toggle (all elements between this h3 and the next h3 or end of section)
+                let contentToToggle = [];
+                let nextElement = heading.nextElementSibling;
+                while (nextElement && nextElement.tagName !== 'H3') {
+                    contentToToggle.push(nextElement);
+                    nextElement = nextElement.nextElementSibling;
+                }
 
-            const nodeMap = new Map(ahpData.nodes.map(node => [node.id, node]));
+                // Initially hide content (except for the first step)
+                if (heading.id !== "step1CriteriaWeights") { // Keep first step open by default
+                    contentToToggle.forEach(el => el.style.display = 'none');
+                    toggleIcon.innerHTML = ' ▶'; // Right arrow for expanded
+                    toggleIcon.style.transform = 'rotate(-90deg)';
+                } else {
+                     toggleIcon.innerHTML = ' ▼';
+                     toggleIcon.style.transform = 'rotate(0deg)';
+                }
 
-            // Assign x, y positions
-            const levels = {};
-            ahpData.nodes.forEach(node => {
-                if (!levels[node.level]) levels[node.level] = [];
-                levels[node.level].push(node);
-            });
 
-            const xSpacing = 250;
-            const ySpacing = 120;
-            let maxYUsed = 0;
-
-            Object.keys(levels).sort((a,b) => a-b).forEach((levelKey, levelIndex) => {
-                const nodesInLevel = levels[levelKey];
-                const levelWidth = (nodesInLevel.length - 1) * ySpacing;
-                let startY = -levelWidth / 2;
-                if (levelKey == 1) startY = 0; // Center the goal
-                if (levelKey == 4) startY -= ySpacing*1.5; // Adjust alternatives start
-
-                nodesInLevel.forEach((node, nodeIndex) => {
-                    node.x = levelIndex * xSpacing;
-                    node.y = startY + nodeIndex * ySpacing;
-                    if (node.y > maxYUsed) maxYUsed = node.y;
+                heading.addEventListener('click', () => {
+                    const isHidden = contentToToggle[0] && contentToToggle[0].style.display === 'none';
+                    contentToToggle.forEach(el => {
+                        el.style.display = isHidden ? '' : 'none'; // Toggle display
+                    });
+                    // Update icon
+                    if (isHidden) {
+                        toggleIcon.innerHTML = ' ▼';
+                        toggleIcon.style.transform = 'rotate(0deg)';
+                    } else {
+                        toggleIcon.innerHTML = ' ▶';
+                        toggleIcon.style.transform = 'rotate(-90deg)';
+                    }
                 });
             });
+        }
 
+        // --- NEW: Interactive Final Score Calculation Display ---
+        const finalScoresList = document.getElementById('finalScoresRecalculated');
+        if (finalScoresList) {
+            const scoreItems = finalScoresList.querySelectorAll('li');
+            scoreItems.forEach(item => {
+                item.style.cursor = 'pointer';
+                item.title = 'Click to see detailed calculation for this alternative'; // Tooltip
 
-            const edgeShapes = [];
-            ahpData.links.forEach(link => {
-                const sourceNode = nodeMap.get(link.source);
-                const targetNode = nodeMap.get(link.target);
-                if (sourceNode && targetNode) {
-                    edgeShapes.push({
-                        type: 'line',
-                        x0: sourceNode.x,
-                        y0: sourceNode.y,
-                        x1: targetNode.x,
-                        y1: targetNode.y,
-                        line: {
-                            color: '#D7CCC8', // Light Brown/Beige for lines
-                            width: 1.5
+                item.addEventListener('mouseenter', () => {
+                    item.style.backgroundColor = '#6D4C41'; // Slightly lighter brown on hover
+                    item.style.transition = 'background-color 0.3s ease';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.backgroundColor = '';
+                });
+
+                item.addEventListener('click', function() {
+                    const altId = this.querySelector('.alternative-label').textContent.split(':')[0].trim(); // e.g., "A1"
+                    // Remove any existing calculation display
+                    const existingDetail = document.getElementById('dynamicCalcDetail');
+                    if (existingDetail) {
+                        existingDetail.remove();
+                    }
+
+                    const detailDiv = document.createElement('div');
+                    detailDiv.id = 'dynamicCalcDetail';
+                    detailDiv.style.backgroundColor = '#4E342E'; // Match graph bg
+                    detailDiv.style.padding = '15px';
+                    detailDiv.style.marginTop = '10px';
+                    detailDiv.style.border = '1px solid #7E57C2'; // Purple border
+                    detailDiv.style.borderRadius = '8px';
+                    detailDiv.style.color = '#F5F5F5'; // White text
+                    detailDiv.style.fontSize = '0.9em';
+
+                    let calculationHTML = `<h4>Detailed Calculation for ${this.querySelector('.alternative-label').textContent}</h4><ul>`;
+
+                    // Assumed structure from your "Step 4" table and "Step 3" global weights
+                    // These would ideally come from a JS data structure if the page was fully dynamic
+                    const globalWeights = {
+                        'SC1.1': 0.140, 'SC1.2': 0.120, 'SC1.3': 0.140,
+                        'SC2.1': 0.100, 'SC2.3': 0.0875, 'SC2.2': 0.0625,
+                        'SC4.3': 0.080, 'SC4.2': 0.060, 'SC4.1': 0.060,
+                        'SC3.2': 0.090, 'SC3.1': 0.060
+                    };
+
+                    // Scores from your table (example for A1 and A4 shown, you'd need all)
+                    const altScores = {
+                        'A1': {'SC1.1':0.30, 'SC1.2':0.15, 'SC1.3':0.25, 'SC2.1':0.20, 'SC2.3':0.10, 'SC2.2':0.30, 'SC4.3':0.20, 'SC4.2':0.15, 'SC4.1':0.25, 'SC3.2':0.15, 'SC3.1':0.10},
+                        'A2': {'SC1.1':0.10, 'SC1.2':0.35, 'SC1.3':0.20, 'SC2.1':0.15, 'SC2.3':0.20, 'SC2.2':0.10, 'SC4.3':0.15, 'SC4.2':0.30, 'SC4.1':0.20, 'SC3.2':0.20, 'SC3.1':0.25},
+                        'A3': {'SC1.1':0.35, 'SC1.2':0.15, 'SC1.3':0.25, 'SC2.1':0.20, 'SC2.3':0.10, 'SC2.2':0.30, 'SC4.3':0.20, 'SC4.2':0.15, 'SC4.1':0.25, 'SC3.2':0.15, 'SC3.1':0.10},
+                        'A4': {'SC1.1':0.15, 'SC1.2':0.25, 'SC1.3':0.15, 'SC2.1':0.30, 'SC2.3':0.35, 'SC2.2':0.25, 'SC4.3':0.30, 'SC4.2':0.35, 'SC4.1':0.20, 'SC3.2':0.35, 'SC3.1':0.30},
+                        'A5': {'SC1.1':0.10, 'SC1.2':0.10, 'SC1.3':0.15, 'SC2.1':0.15, 'SC2.3':0.25, 'SC2.2':0.05, 'SC4.3':0.15, 'SC4.2':0.05, 'SC4.1':0.10, 'SC3.2':0.15, 'SC3.1':0.25}
+                    };
+
+                    let totalScore = 0;
+                    if (altScores[altId]) {
+                        for (const scId in globalWeights) {
+                            if (altScores[altId].hasOwnProperty(scId)) {
+                                const gw = globalWeights[scId];
+                                const as = altScores[altId][scId];
+                                const weightedScore = gw * as;
+                                totalScore += weightedScore;
+                                calculationHTML += `<li>vs ${scId}: (${gw.toFixed(4)} × ${as.toFixed(2)}) = ${weightedScore.toFixed(5)}</li>`;
+                            }
                         }
-                    });
+                        calculationHTML += `</ul><p style="font-weight:bold; color:#E040FB;">Total Score: ${totalScore.toFixed(5)}</p>`;
+                    } else {
+                        calculationHTML = `<p>Detailed scores for ${altId} not fully defined in this example script.</p>`;
+                    }
+                    detailDiv.innerHTML = calculationHTML;
+                    this.parentNode.insertBefore(detailDiv, this.nextSibling); // Insert after the clicked item
+                });
+            });
+        }
+
+        // --- NEW: Highlight winning alternative ---
+        const scoresListForHighlight = document.getElementById('finalScoresRecalculated');
+        if (scoresListForHighlight) {
+            let highestScore = -1;
+            let winningItem = null;
+            scoresListForHighlight.querySelectorAll('li').forEach(item => {
+                const scoreText = item.querySelector('.emphasis').textContent;
+                const score = parseFloat(scoreText);
+                if (score > highestScore) {
+                    highestScore = score;
+                    winningItem = item;
                 }
             });
+            if (winningItem) {
+                winningItem.style.border = '2px solid #E040FB'; // Bright purple border
+                winningItem.style.boxShadow = '0 0 10px #E040FB';
+                winningItem.style.padding = '8px';
+                winningItem.style.borderRadius = '8px';
+                const winnerLabel = winningItem.querySelector('.alternative-label');
+                if(winnerLabel) {
+                     winnerLabel.innerHTML += ' <span style="color:#FFB74D; font-size:0.9em;">(Highest Score)</span>';
+                }
+            }
+        }
 
-            const traceNodes = {
-                x: ahpData.nodes.map(n => n.x),
-                y: ahpData.nodes.map(n => n.y),
-                text: ahpData.nodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
-                mode: 'markers+text',
-                type: 'scatter',
-                marker: {
-                    size: 20,
-                    color: ahpData.nodes.map(n => {
-                        if (n.level === 1) return '#4A148C'; // Dark Purple (Goal)
-                        if (n.level === 2) return '#7B1FA2'; // Medium Purple (Criteria)
-                        if (n.level === 3) return '#795548'; // Medium Brown (Sub-Criteria)
-                        if (n.level === 4) return '#5D4037'; // Dark Brown (Alternatives)
-                        return '#E1BEE7';
-                    }),
-                    symbol: ahpData.nodes.map(n => {
-                        if (n.level === 1) return 'diamond';
-                        if (n.level === 2) return 'square';
-                        if (n.level === 3) return 'circle';
-                        if (n.level === 4) return 'hexagon2';
-                        return 'circle';
-                    }),
-                    line: {
-                        width: 2,
-                        color: '#424242' // Dark Grey border for markers
+        // Add IDs to H3 elements in the calculation section if they don't have them, for accordion to work
+        const calcSectionForIds = document.querySelector('.content-section:has(h2#ahpCalculationSteps)');
+        if (calcSectionForIds) {
+            const h3s = calcSectionForIds.querySelectorAll('h3');
+            h3s.forEach((h3, index) => {
+                if (!h3.id) {
+                    // Create a simple ID based on the step number
+                    // Ensure the H2 has the ID 'ahpCalculationSteps'
+                    const h2Title = h3.closest('.content-section').querySelector('h2');
+                    if (h2Title && h2Title.textContent.includes("AHP Calculation Simulation")) {
+                         h2Title.id = "ahpCalculationSteps"; // Ensure the main h2 has this ID
                     }
-                },
-                textfont: {
-                    family: 'Segoe UI, Tahoma, sans-serif',
-                    size: 10,
-                    color: '#3E2723' // Darkest brown text for nodes
-                },
-                textposition: 'middle right',
-                hoverinfo: 'text',
-                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`)
-            };
 
-            const layout = {
-                title: {
-                    text: 'AHP Hierarchy: Coffee Offering Selection',
-                    font: {
-                        size: 20,
-                        color: '#4A148C' // Dark Purple
-                    }
-                },
-                shapes: edgeShapes,
-                xaxis: {
-                    showgrid: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    range: [-xSpacing*0.5, xSpacing * 3.5] // Adjusted range
-                },
-                yaxis: {
-                    showgrid: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    range: [-maxYUsed - ySpacing, maxYUsed + ySpacing] // Adjusted range
-                },
-                showlegend: false,
-                hovermode: 'closest',
-                paper_bgcolor: '#FFFFFF', // Background of the plotting area
-                plot_bgcolor: '#FFFFFF',  // Background of the graph itself
-                margin: { t: 80, b: 40, l: 40, r: 40 },
-                height: 800 // Increased height for better spacing
-            };
+                    // Assign IDs to H3s for accordion logic
+                    if (h3.textContent.includes("Step 1:")) h3.id = "step1CriteriaWeights";
+                    else if (h3.textContent.includes("Step 2:")) h3.id = "step2SubCriteriaWeights";
+                    else if (h3.textContent.includes("Step 3:")) h3.id = "step3GlobalWeights";
+                    else if (h3.textContent.includes("Step 4:")) h3.id = "step4ScoringAlternatives";
+                    else if (h3.textContent.includes("Step 5:")) h3.id = "step5FinalScores";
+                    // Add more else if for other H3s if needed
+                }
+            });
+        }
 
-            Plotly.newPlot('ahpGraph', [traceNodes], layout);
 
-            // Small fix for link generation - ensure only unique links for goal to criteria etc.
-            // The flatMap approach for alternatives is good, but we need to preserve the earlier defined links.
-            // The .concat method used in the data structure above is a better way.
-            // The current link generation for Sub-Criteria to Alternatives is illustrative, showing layer connection.
-            // A true AHP evaluation would have individual weightings.
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
