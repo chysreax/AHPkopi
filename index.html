@@ -494,186 +494,215 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const graphDiv = document.getElementById('ahpGraph');
+
             const ahpData = {
                 nodes: [
                     // Level 1: Goal
-                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'Goal' },
-
+                    { id: 'Goal', label: 'Select Optimal New Single<br>Origin Feature Offering', level: 1, group: 1, title: 'GOAL' },
                     // Level 2: Criteria
-                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'Criterion 1' },
-                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'Criterion 2' },
-                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'Criterion 3' },
-                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'Criterion 4' },
-
-                    // Level 3: Sub-Criteria for C1
-                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C2
-                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C3
-                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'Sub-Criterion' },
-                    // Level 3: Sub-Criteria for C4
-                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'Sub-Criterion' },
-                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'Sub-Criterion' },
-
-
+                    { id: 'C1', label: 'Exceptional Flavor<br>& Quality', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C2', label: 'Customer Appeal<br>& Uniqueness', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C3', label: 'Barista Skill<br>& Consistency', level: 2, group: 2, title: 'CRITERION' },
+                    { id: 'C4', label: 'Sourcing Story<br>& Bean Characteristics', level: 2, group: 2, title: 'CRITERION' },
+                    // Level 3: Sub-Criteria
+                    { id: 'SC1.1', label: 'Clarity of Notes', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC1.2', label: 'Body & Mouthfeel', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC1.3', label: 'Aroma Intensity', level: 3, group: 3, title: 'SUB-CRITERION (Flavor)' },
+                    { id: 'SC2.1', label: 'Perceived Value', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC2.2', label: 'Instagrammability', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC2.3', label: 'Novelty Factor', level: 3, group: 3, title: 'SUB-CRITERION (Appeal)' },
+                    { id: 'SC3.1', label: 'Ease of Training', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
+                    { id: 'SC3.2', label: 'Reproducibility', level: 3, group: 3, title: 'SUB-CRITERION (Skill)' },
+                    { id: 'SC4.1', label: 'Origin Reputation', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    { id: 'SC4.2', label: 'Processing Impact', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
+                    { id: 'SC4.3', label: 'Ethical Story', level: 3, group: 3, title: 'SUB-CRITERION (Sourcing)' },
                     // Level 4: Alternatives
-                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 1' },
-                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'Alternative 2' },
-                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'Alternative 3' },
-                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'Alternative 4' },
-                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'Alternative 5' }
+                    { id: 'A1', label: 'Aceh Gayo (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 1' },
+                    { id: 'A2', label: 'Mandailing (Dry)<br>via French Press', level: 4, group: 4, title: 'ALTERNATIVE 2' },
+                    { id: 'A3', label: 'Toraja (Washed)<br>via V60', level: 4, group: 4, title: 'ALTERNATIVE 3' },
+                    { id: 'A4', label: 'Flores Bajawa (Honey)<br>via Cold Brew', level: 4, group: 4, title: 'ALTERNATIVE 4' },
+                    { id: 'A5', label: 'Aceh Gayo (Washed)<br>via Tubruk', level: 4, group: 4, title: 'ALTERNATIVE 5' }
                 ],
                 links: [
-                    // Goal to Criteria
-                    { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
-                    // C1 to its Sub-Criteria
-                    { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
-                    // C2 to its Sub-Criteria
-                    { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
-                    // C3 to its Sub-Criteria
-                    { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
-                    // C4 to its Sub-Criteria
-                    { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-                    // Sub-Criteria to Alternatives (Illustrative - connecting all for simplicity, in reality specific connections)
-                    // Connecting all sub-criteria to all alternatives for visual representation of the layer.
-                    // In practice, each alternative is evaluated against each sub-criterion.
-                    'SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3'
-                ].flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
-                 .concat([ // Adding goal to criteria links back as flatMap overwrote them
                     { source: 'Goal', target: 'C1' }, { source: 'Goal', target: 'C2' }, { source: 'Goal', target: 'C3' }, { source: 'Goal', target: 'C4' },
                     { source: 'C1', target: 'SC1.1' }, { source: 'C1', target: 'SC1.2' }, { source: 'C1', target: 'SC1.3' },
                     { source: 'C2', target: 'SC2.1' }, { source: 'C2', target: 'SC2.2' }, { source: 'C2', target: 'SC2.3' },
                     { source: 'C3', target: 'SC3.1' }, { source: 'C3', target: 'SC3.2' },
                     { source: 'C4', target: 'SC4.1' }, { source: 'C4', target: 'SC4.2' }, { source: 'C4', target: 'SC4.3' },
-                 ])
+                ].concat(
+                    ['SC1.1', 'SC1.2', 'SC1.3', 'SC2.1', 'SC2.2', 'SC2.3', 'SC3.1', 'SC3.2', 'SC4.1', 'SC4.2', 'SC4.3']
+                    .flatMap(sc => ['A1', 'A2', 'A3', 'A4', 'A5'].map(alt => ({ source: sc, target: alt })))
+                )
             };
 
-            const nodeMap = new Map(ahpData.nodes.map(node => [node.id, node]));
+            const nodeMap = new Map(ahpData.nodes.map((node, i) => [node.id, { ...node, index: i }]));
 
-            // Assign x, y positions
             const levels = {};
             ahpData.nodes.forEach(node => {
                 if (!levels[node.level]) levels[node.level] = [];
                 levels[node.level].push(node);
             });
 
-            const xSpacing = 250;
-            const ySpacing = 120;
+            const xSpacing = 280;
+            const ySpacing = 110;
             let maxYUsed = 0;
+            let minYUsed = 0;
 
-            Object.keys(levels).sort((a,b) => a-b).forEach((levelKey, levelIndex) => {
+            Object.keys(levels).sort((a,b) => parseInt(a)-parseInt(b)).forEach((levelKey, levelIndex) => {
                 const nodesInLevel = levels[levelKey];
                 const levelWidth = (nodesInLevel.length - 1) * ySpacing;
                 let startY = -levelWidth / 2;
-                if (levelKey == 1) startY = 0; // Center the goal
-                if (levelKey == 4) startY -= ySpacing*1.5; // Adjust alternatives start
 
-                nodesInLevel.forEach((node, nodeIndex) => {
+                if (parseInt(levelKey) === 1) startY = 0;
+                if (parseInt(levelKey) === 4) startY -= ySpacing * 1.2;
+
+                nodesInLevel.forEach((node, nodeIndexInLevel) => {
                     node.x = levelIndex * xSpacing;
-                    node.y = startY + nodeIndex * ySpacing;
+                    node.y = startY + nodeIndexInLevel * ySpacing;
                     if (node.y > maxYUsed) maxYUsed = node.y;
+                    if (node.y < minYUsed) minYUsed = node.y;
+                    const mappedNode = nodeMap.get(node.id);
+                    if(mappedNode) {
+                        mappedNode.x = node.x;
+                        mappedNode.y = node.y;
+                    }
                 });
             });
 
-
-            const edgeShapes = [];
-            ahpData.links.forEach(link => {
+            const initialEdgeShapes = ahpData.links.map((link, index) => {
                 const sourceNode = nodeMap.get(link.source);
                 const targetNode = nodeMap.get(link.target);
-                if (sourceNode && targetNode) {
-                    edgeShapes.push({
-                        type: 'line',
-                        x0: sourceNode.x,
-                        y0: sourceNode.y,
-                        x1: targetNode.x,
-                        y1: targetNode.y,
-                        line: {
-                            color: '#D7CCC8', // Light Brown/Beige for lines
-                            width: 1.5
-                        }
-                    });
+                 if (!sourceNode || !targetNode) {
+                    console.warn(`Graph Snippet: Missing node for link: ${link.source} -> ${link.target}`);
+                    return null;
                 }
-            });
+                return {
+                    id: `link-${index}`,
+                    type: 'line',
+                    x0: sourceNode.x,
+                    y0: sourceNode.y,
+                    x1: targetNode.x,
+                    y1: targetNode.y,
+                    line: { color: '#757575', width: 1.5 },
+                    opacity: 1
+                };
+            }).filter(shape => shape !== null);
 
             const traceNodes = {
-                x: ahpData.nodes.map(n => n.x),
-                y: ahpData.nodes.map(n => n.y),
+                x: ahpData.nodes.map(n => nodeMap.get(n.id)?.x),
+                y: ahpData.nodes.map(n => nodeMap.get(n.id)?.y),
                 text: ahpData.nodes.map(n => `<b>${n.label.replace(/<br>/g, '\n')}</b>`),
                 mode: 'markers+text',
                 type: 'scatter',
                 marker: {
-                    size: 20,
+                    size: ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24)),
                     color: ahpData.nodes.map(n => {
-                        if (n.level === 1) return '#4A148C'; // Dark Purple (Goal)
-                        if (n.level === 2) return '#7B1FA2'; // Medium Purple (Criteria)
-                        if (n.level === 3) return '#795548'; // Medium Brown (Sub-Criteria)
-                        if (n.level === 4) return '#5D4037'; // Dark Brown (Alternatives)
-                        return '#E1BEE7';
+                        if (n.level === 1) return '#E040FB'; // Bright Purple (Goal)
+                        if (n.level === 2) return '#BA68C8'; // Medium Purple (Criteria)
+                        if (n.level === 3) return '#4DB6AC'; // Teal (Sub-Criteria)
+                        if (n.level === 4) return '#FFB74D'; // Amber (Alternatives)
+                        return '#D1C4E9';
                     }),
                     symbol: ahpData.nodes.map(n => {
-                        if (n.level === 1) return 'diamond';
+                        if (n.level === 1) return 'diamond-wide';
                         if (n.level === 2) return 'square';
                         if (n.level === 3) return 'circle';
-                        if (n.level === 4) return 'hexagon2';
+                        if (n.level === 4) return 'hexagon';
                         return 'circle';
                     }),
-                    line: {
-                        width: 2,
-                        color: '#424242' // Dark Grey border for markers
-                    }
+                    line: { width: 2, color: '#F5F5F5' },
+                    opacity: ahpData.nodes.map(() => 1)
                 },
                 textfont: {
                     family: 'Segoe UI, Tahoma, sans-serif',
                     size: 10,
-                    color: '#3E2723' // Darkest brown text for nodes
+                    color: '#FFFFFF'
                 },
                 textposition: 'middle right',
                 hoverinfo: 'text',
-                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`)
+                hovertext: ahpData.nodes.map(n => `<b>${n.title}</b><br>${n.label.replace(/<br>/g, ' ')}`),
+                customdata: ahpData.nodes.map(n => ({ id: n.id }))
             };
 
             const layout = {
                 title: {
-                    text: 'AHP Hierarchy: Coffee Offering Selection',
-                    font: {
-                        size: 20,
-                        color: '#4A148C' // Dark Purple
-                    }
+                    text: 'AHP Hierarchy Graph', // Generic title for snippet
+                    font: { size: 22, color: '#E040FB' },
+                    y:0.95
                 },
-                shapes: edgeShapes,
-                xaxis: {
-                    showgrid: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    range: [-xSpacing*0.5, xSpacing * 3.5] // Adjusted range
-                },
-                yaxis: {
-                    showgrid: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    range: [-maxYUsed - ySpacing, maxYUsed + ySpacing] // Adjusted range
-                },
+                shapes: initialEdgeShapes,
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [-xSpacing*0.5, xSpacing * 3.5 + 50] },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [minYUsed - ySpacing, maxYUsed + ySpacing] },
                 showlegend: false,
                 hovermode: 'closest',
-                paper_bgcolor: '#FFFFFF', // Background of the plotting area
-                plot_bgcolor: '#FFFFFF',  // Background of the graph itself
+                paper_bgcolor: '#4E342E',
+                plot_bgcolor: '#4E342E',
                 margin: { t: 80, b: 40, l: 40, r: 40 },
-                height: 800 // Increased height for better spacing
+                height: 750 // Adjusted height for a standalone snippet
             };
 
-            Plotly.newPlot('ahpGraph', [traceNodes], layout);
+            Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
 
-            // Small fix for link generation - ensure only unique links for goal to criteria etc.
-            // The flatMap approach for alternatives is good, but we need to preserve the earlier defined links.
-            // The .concat method used in the data structure above is a better way.
-            // The current link generation for Sub-Criteria to Alternatives is illustrative, showing layer connection.
-            // A true AHP evaluation would have individual weightings.
+            graphDiv.on('plotly_hover', function (eventData) {
+                if (eventData.points.length > 0) {
+                    const hoveredNodeIndex = eventData.points[0].pointNumber;
+                    const hoveredNodeId = ahpData.nodes[hoveredNodeIndex].id;
+
+                    const connectedLinkIds = [];
+                    const connectedNodeIds = new Set([hoveredNodeId]);
+
+                    ahpData.links.forEach((link,idx) => {
+                        const sourceNode = nodeMap.get(link.source); // Check nodes exist
+                        const targetNode = nodeMap.get(link.target);
+                        if (!sourceNode || !targetNode) return;
+
+                        if (link.source === hoveredNodeId) {
+                            connectedNodeIds.add(link.target);
+                            connectedLinkIds.push(`link-${idx}`);
+                        }
+                        if (link.target === hoveredNodeId) {
+                            connectedNodeIds.add(link.source);
+                            connectedLinkIds.push(`link-${idx}`);
+                        }
+                    });
+
+                    const newMarkerOpacities = ahpData.nodes.map(n => connectedNodeIds.has(n.id) ? 1 : 0.2);
+                    const newMarkerSizes = ahpData.nodes.map(n => {
+                        if (n.id === hoveredNodeId) return n.level === 1 ? 32 : (n.level === 4 ? 26 : 28);
+                        return n.level === 1 ? 28 : (n.level === 4 ? 22 : 24);
+                    });
+
+                    Plotly.restyle(graphDiv, {
+                        'marker.opacity': [newMarkerOpacities],
+                        'marker.size': [newMarkerSizes]
+                    }, [0]);
+
+                    const updatedShapes = initialEdgeShapes.map(shape => {
+                        if (!shape) return null; // handle cases where a link shape might be null
+                        const linkData = ahpData.links[parseInt(shape.id.split('-')[1])]; // get original link data by index
+                        if (!linkData) return shape; // if link data not found, return original shape
+
+                        const isConnected = (linkData.source === hoveredNodeId && connectedNodeIds.has(linkData.target)) ||
+                                            (linkData.target === hoveredNodeId && connectedNodeIds.has(linkData.source));
+
+                        return { ...shape, line: {...shape.line, width: isConnected ? 3 : 1.5, color: isConnected ? '#E040FB' : '#757575'}, opacity: isConnected ? 1 : 0.15 };
+                    }).filter(shape => shape !== null);
+                    Plotly.relayout(graphDiv, { shapes: updatedShapes });
+                }
+            });
+
+            graphDiv.on('plotly_unhover', function (eventData) {
+                Plotly.restyle(graphDiv, {
+                    'marker.opacity': [ahpData.nodes.map(() => 1)],
+                    'marker.size': [ahpData.nodes.map(n => n.level === 1 ? 28 : (n.level === 4 ? 22 : 24))]
+                }, [0]);
+                 const resetShapes = initialEdgeShapes.map(s => {
+                    if (!s) return null;
+                    return ({...s, line: {...s.line, width: 1.5, color: '#757575'}, opacity: 1});
+                }).filter(shape => shape !== null);
+                Plotly.relayout(graphDiv, { shapes: resetShapes });
+            });
         });
         // --- NEW: Accordion for AHP Calculation Steps ---
         const calculationSection = document.querySelector('.content-section:has(h2#ahpCalculationSteps)'); // More robust selector
