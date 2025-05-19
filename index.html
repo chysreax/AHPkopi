@@ -572,23 +572,27 @@
             });
 
             const initialEdgeShapes = ahpData.links.map((link, index) => {
-                const sourceNode = nodeMap.get(link.source);
-                const targetNode = nodeMap.get(link.target);
-                 if (!sourceNode || !targetNode) {
-                    console.warn(`Graph Snippet: Missing node for link: ${link.source} -> ${link.target}`);
-                    return null;
-                }
-                return {
-                    id: `link-${index}`,
-                    type: 'line',
-                    x0: sourceNode.x,
-                    y0: sourceNode.y,
-                    x1: targetNode.x,
-                    y1: targetNode.y,
-                    line: { color: '#757575', width: 1.5 },
-                    opacity: 1
-                };
-            }).filter(shape => shape !== null);
+const sourceNode = nodeMap.get(link.source);
+const targetNode = nodeMap.get(link.target);
+                 if (!sourceNode || !targetNode ||
+typeof sourceNode.x === 'undefined' || typeof sourceNode.y === 'undefined' ||
+typeof targetNode.x === 'undefined' || typeof targetNode.y === 'undefined') {
+console.warn(Graph: Missing node or coordinates for link: ${link.source} -> ${link.target}. Source found: ${!!sourceNode}, Target found: ${!!targetNode});
+if (sourceNode) console.warn(Source node (${link.source}) coords: x=${sourceNode.x}, y=${sourceNode.y});
+if (targetNode) console.warn(Target node (${link.target}) coords: x=${targetNode.x}, y=${targetNode.y});
+return null; // Skip this link if data is incomplete
+}
+return {
+id: link-${index},
+type: 'line',
+x0: sourceNode.x,
+y0: sourceNode.y,
+x1: targetNode.x,
+y1: targetNode.y,
+line: { color: '#757575', width: 1.5 },
+opacity: 1
+};
+}).filter(shape => shape !== null); // Remove any nulls from skipped links
 
             const traceNodes = {
                 x: ahpData.nodes.map(n => nodeMap.get(n.id)?.x),
@@ -642,7 +646,9 @@
                 margin: { t: 80, b: 40, l: 40, r: 40 },
                 height: 750 // Adjusted height for a standalone snippet
             };
-
+            console.log("graphDiv:", graphDiv); // Check if the target div is found
+            console.log("traceNodes data:", JSON.stringify(traceNodes.x), JSON.stringify(traceNodes.y));
+            console.log("initialEdgeShapes data (layout.shapes):", JSON.stringify(initialEdgeShapes));
             Plotly.newPlot(graphDiv, [traceNodes], layout, {responsive: true});
 
             graphDiv.on('plotly_hover', function (eventData) {
